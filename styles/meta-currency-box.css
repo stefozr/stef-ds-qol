@@ -1,0 +1,121 @@
+/* Stef's Quality of Life Improvements for Draw Steel — Fix 14: movable Hero Tokens / Malice box. */
+
+/* The system strip under the players list is replaced while the box is shown. */
+body.dslf-meta-box #meta-currency {
+  display: none;
+}
+
+#dslf-meta-currency {
+  --dslf-mb-hero: #e0a93b;
+  --dslf-mb-malice: #e5534b;
+  position: fixed;
+  z-index: calc(var(--z-index-ui, 60) + 1);
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  cursor: grab;
+}
+
+#dslf-meta-currency.dragging {
+  cursor: grabbing;
+}
+
+#dslf-meta-currency .dslf-mb-panel {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.35rem 0.4rem 0.25rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  border-radius: 10px;
+  background: rgb(22 22 26 / 0.88);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.55);
+  backdrop-filter: blur(4px);
+}
+
+#dslf-meta-currency .dslf-mb-grip {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 0.15rem;
+  color: rgb(255 255 255 / 0.25);
+  font-size: 0.75rem;
+}
+
+#dslf-meta-currency:hover .dslf-mb-grip {
+  color: rgb(255 255 255 / 0.5);
+}
+
+#dslf-meta-currency .dslf-mb-value {
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 5.5rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#dslf-meta-currency .dslf-mb-value:hover,
+#dslf-meta-currency .dslf-mb-value:focus-visible {
+  background: rgb(255 255 255 / 0.07);
+}
+
+#dslf-meta-currency .dslf-mb-number {
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+#dslf-meta-currency .dslf-mb-hero .dslf-mb-number {
+  color: var(--dslf-mb-hero);
+}
+
+#dslf-meta-currency .dslf-mb-malice .dslf-mb-number {
+  color: var(--dslf-mb-malice);
+}
+
+#dslf-meta-currency .dslf-mb-malice.idle {
+  opacity: 0.5;
+}
+
+#dslf-meta-currency .dslf-mb-label {
+  margin-top: 0.1rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.62);
+  white-space: nowrap;
+}
+
+#dslf-meta-currency .dslf-mb-divider {
+  align-self: stretch;
+  width: 1px;
+  margin: 0.2rem 0.1rem;
+  background: rgb(255 255 255 / 0.18);
+}
+
+#dslf-meta-currency .dslf-mb-menu {
+  all: unset;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 0.3rem;
+  border-radius: 6px;
+  color: rgb(255 255 255 / 0.45);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+#dslf-meta-currency .dslf-mb-menu:hover {
+  color: rgb(255 255 255 / 0.9);
+  background: rgb(255 255 255 / 0.07);
+}
+
+/* Players cannot change Malice: no hover affordance. */
+#dslf-meta-currency .dslf-mb-malice[tabindex="-1"] {
+  cursor: default;
+  background: none;
+}

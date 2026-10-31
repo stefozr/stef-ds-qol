@@ -1,0 +1,104 @@
+{
+  "DSLF": {
+    "Chat": {
+      "Settings": {
+        "CollapseAbilityCards": {
+          "Name": "Collapse ability cards in chat",
+          "Hint": "Collapse the description of ability cards in chat. 'Effects only' keeps the summary (keywords, distance, target) and turns each effect and power roll into a collapsed header you open individually; clicking the ability name opens or closes them all. 'All' hides everything behind the ability name; click the card to expand it. Per client. 'Effects only' has no effect while Compact ability cards is on.",
+          "Off": "Off — show everything",
+          "Effects": "Effects only — keep the summary, collapse each effect",
+          "All": "All — show only the ability name"
+        },
+        "CompactAbilityCards": {
+          "Name": "Compact ability cards in chat",
+          "Hint": "Ability cards show the name with a one-line summary, the effect text without section headers, the tier table folded behind 'tiers' and the roll result on one line (click the total for the dice). Removes Combat Tools' 'automates part of this' note. Per client."
+        }
+      },
+      "Compact": {
+        "Tiers": "tiers",
+        "PowerRoll": "Power Roll",
+        "Trigger": "Trigger",
+        "ShowRolls": "Show dice",
+        "Options": "Options"
+      }
+    },
+    "Tracker": {
+      "Settings": {
+        "ActivationMode": {
+          "Name": "Combat Tracker dock: Turn Activation",
+          "Hint": "How a portrait or group pill in the Draw Steel Combat Tracker dock starts a turn. With Double-click (default), Confirm and Modifier, a plain click only selects and pans to the token(s), so an accidental click no longer starts a turn or rolls a heroic resource.",
+          "DoubleClick": "Double-click (single click selects)",
+          "Click": "Single click (original behaviour)",
+          "Confirm": "Single click with confirmation dialog",
+          "Modifier": "Ctrl/Shift + click (single click selects)"
+        },
+        "ShowBeforeStart": {
+          "Name": "Combat Tracker dock: Show Before Combat Starts",
+          "Hint": "Show the dock as soon as an encounter exists so you can add tokens, build groups and then press Begin Combat from the dock."
+        },
+        "PortraitSize": {
+          "Name": "Combat Tracker dock: Portrait Size",
+          "Hint": "Size of the main portraits in pixels (per client). Group pills, minis, names and the dock height scale with it."
+        }
+      },
+      "Notifications": {
+        "NoCombatants": "Add at least one combatant before beginning the encounter.",
+        "SelectTokensToAdd": "Select one or more tokens to add."
+      },
+      "Disabled": "Stef's Quality of Life Improvements for Draw Steel — Fix 6 is disabled: Combat Tracker {version} is not a verified version ({verified}). The dock runs stock until the port is re-checked.",
+      "BeginCombat": "Begin Combat",
+      "SetupPhase": "Setting up",
+      "SetupHint": "Click to select; the Director starts the encounter",
+      "WaitingForDirector": "Waiting for the Director to begin…",
+      "AddSelectedTokens": "Add Selected Tokens",
+      "RollFirst": "Roll for First",
+      "ActDouble": "Double-click to Act — click to select",
+      "ActConfirm": "Click to Act (asks for confirmation)",
+      "ActModifier": "Ctrl/Shift+Click to Act — click to select",
+      "RestoreDouble": "Double-click to Restore",
+      "ConfirmActivation": {
+        "Title": "Start Turn?",
+        "Content": "Start {name}'s turn now? Heroes roll their heroic resource when their turn starts."
+      },
+      "UndoActivation": "Undo Last Activation",
+      "UndoDone": "Activation undone for {name}: initiative, turn and heroic resource restored.",
+      "NothingToUndo": "There is no activation that can be undone.",
+      "Groups": {
+        "Create": "Create Group",
+        "Rename": "Rename Group",
+        "AddSelected": "Add Selected Tokens to Group",
+        "UngroupAll": "Remove All Members",
+        "MoveTo": "Move to {group}",
+        "RemoveFromGroup": "Remove from Group",
+        "ToggleCaptain": "Toggle Captain"
+      },
+      "Context": {
+        "OpenSheet": "Open Sheet",
+        "ToggleDefeated": "Toggle Defeated",
+        "RemoveFromCombat": "Remove from Encounter"
+      }
+    },
+    "Version": {
+      "Unverified": "Stef's Quality of Life Improvements for Draw Steel was checked against Combat Tools {verified}, not {version}. Its Combat Tools fixes (ghost art, teleports, squad labels, hidden tokens) still run; check them before a session."
+    },
+    "MetaBox": {
+      "HeroTokens": "Hero Tokens",
+      "Malice": "Malice",
+      "Settings": {
+        "Name": "Movable Hero Tokens / Malice box",
+        "Hint": "Show Hero Tokens and Malice in a small box you can drag anywhere on screen (its position is saved per user). Replaces the strip under the players list. The Director clicks a number to remove one and right-clicks to add one; players click Hero Tokens to spend one. Per client."
+      },
+      "Tooltip": {
+        "HeroTokensGM": "Click: −1 Hero Token · Right-click: +1 Hero Token",
+        "HeroTokensPlayer": "Click to spend a hero token",
+        "MaliceGM": "Click: −1 Malice · Right-click: +1 Malice",
+        "MaliceIdle": "No combat: Malice is set when combat starts. Click: −1 · Right-click: +1",
+        "Drag": "Drag to move",
+        "Menu": "Hero token and Malice options"
+      },
+      "SpendTitle": "Spend a Hero Token",
+      "SpendConfirm": "Spend one hero token? The Director is told in chat.",
+      "ResetPosition": "Reset box position"
+    }
+  }
+}

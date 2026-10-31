@@ -1,0 +1,15 @@
+<div class="dslf-mb-panel">
+  <i class="dslf-mb-grip fa-solid fa-grip-vertical" data-tooltip="DSLF.MetaBox.Tooltip.Drag"></i>
+  <button type="button" class="dslf-mb-value dslf-mb-hero" data-action="heroTokens" data-tooltip-text="{{heroTooltip}}">
+    <span class="dslf-mb-number">{{heroTokens.value}}</span>
+    <span class="dslf-mb-label">{{heroTokens.label}}</span>
+  </button>
+  {{#if showMalice}}
+  <span class="dslf-mb-divider"></span>
+  <button type="button" class="dslf-mb-value dslf-mb-malice {{#if maliceIdle}}idle{{/if}}" data-action="malice" {{#if maliceTooltip}}data-tooltip-text="{{maliceTooltip}}"{{/if}} {{#unless isGM}}tabindex="-1"{{/unless}}>
+    <span class="dslf-mb-number">{{malice.value}}</span>
+    <span class="dslf-mb-label">{{malice.label}}</span>
+  </button>
+  {{/if}}
+  <button type="button" class="dslf-mb-menu fa-solid fa-ellipsis-vertical" data-tooltip="DSLF.MetaBox.Tooltip.Menu"></button>
+</div>

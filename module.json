@@ -1,0 +1,89 @@
+{
+  "id": "stef-ds-qol",
+  "title": "Stef's Quality of Life Improvements for Draw Steel",
+  "description": "Small fixes and table conveniences for the Draw Steel system and the Combat Tools family: public heroic resource rolls, compact or collapsible ability cards in chat, a movable Hero Tokens / Malice box, a safer Combat Tracker dock with undo and a setup phase, hidden tokens that stay hidden, ring art in tracker portraits and more, each applied from outside so it survives updates. Stef's Quality of Life Improvements for Draw Steel is not affiliated with MCDM Productions, LLC. Draw Steel is a trademark of MCDM Productions, LLC.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Stefan",
+      "url": "https://github.com/stefozr"
+    }
+  ],
+  "url": "https://github.com/stefozr/stef-ds-qol",
+  "manifest": "https://github.com/stefozr/stef-ds-qol/releases/latest/download/module.json",
+  "download": "https://github.com/stefozr/stef-ds-qol/releases/download/v1.0.0/module.zip",
+  "bugs": "https://github.com/stefozr/stef-ds-qol/issues",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "changelog": "CHANGELOG.md",
+  "esmodules": [
+    "scripts/main.mjs"
+  ],
+  "styles": [
+    "styles/tracker-dock.css",
+    "styles/chat-cards.css",
+    "styles/compact-cards.css",
+    "styles/meta-currency-box.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "socket": true,
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.369"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "draw-steel",
+        "type": "system",
+        "compatibility": {
+          "minimum": "1.1.2",
+          "verified": "1.1.2"
+        },
+        "reason": "Every fix works on the Draw Steel system's documents, chat cards and user interface."
+      }
+    ],
+    "recommends": [
+      {
+        "id": "lib-wrapper",
+        "type": "module",
+        "reason": "Wraps core and system methods cooperatively with other modules; without it the fixes patch the methods directly."
+      },
+      {
+        "id": "draw-steel-combat-tools",
+        "type": "module",
+        "compatibility": {
+          "verified": "1.2.8"
+        },
+        "reason": "Fixes 2, 3, 5 and 8 repair its token ghosts, teleport buttons, squad labels and hidden-token reveal (checked against 1.2.3, 1.2.6, 1.2.7 and 1.2.8)."
+      },
+      {
+        "id": "draw-steel-combat-tracker",
+        "type": "module",
+        "compatibility": {
+          "verified": "1.0.9"
+        },
+        "reason": "Fix 6 adds turn activation modes with undo, group management, a setup phase and sizing to its dock (version 1.0.9 only)."
+      },
+      {
+        "id": "draw-steel-target-damage",
+        "type": "module",
+        "compatibility": {
+          "verified": "1.0.8"
+        },
+        "reason": "Fix 10 lets it find the author of chat messages on Foundry 14, so only one client saves its panel state."
+      },
+      {
+        "id": "stef-ds-automation",
+        "type": "module",
+        "reason": "Where its ability library automates a teleport, Fix 3 hands that ability over to it."
+      }
+    ]
+  }
+}

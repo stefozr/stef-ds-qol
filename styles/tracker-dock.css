@@ -1,0 +1,154 @@
+/* Derived from Draw Steel - Combat Tracker (MIT, Copyright (c) 2026 Ömer Cora); see THIRD-PARTY-NOTICES.md. */
+/* ------------------------------------------------------------------
+   Stef's Quality of Life Improvements for Draw Steel — Fix 6: Combat Tracker dock
+   Derived from the styles of draw-steel-combat-tracker 1.0.9.
+   Every rule is prefixed with #ds-combat-dock so it wins over the tracker's own
+   class-only rules regardless of stylesheet order.
+   ------------------------------------------------------------------ */
+
+/* Portrait size drives every other dimension; --ds-scale is size/80 (set from JS) */
+#ds-combat-dock {
+  --ds-portrait-size: 80px;
+  --ds-scale: 1;
+}
+
+/* Content height follows the portrait size (the collapsed state keeps the tracker's own rules) */
+#ds-combat-dock:not(.collapsed) .ds-dock-content {
+  min-height: calc(var(--ds-portrait-size) + 40px);
+  max-height: calc(var(--ds-portrait-size) * 2 + 160px);
+}
+
+/* Main portraits */
+#ds-combat-dock .ds-portrait-img {
+  width: var(--ds-portrait-size);
+  height: var(--ds-portrait-size);
+}
+
+#ds-combat-dock .ds-portrait-name {
+  font-size: calc(12px * var(--ds-scale));
+  max-width: calc(var(--ds-portrait-size) * 0.9);
+}
+
+#ds-combat-dock .ds-portrait-stamina {
+  font-size: calc(11px * var(--ds-scale));
+}
+
+#ds-combat-dock .ds-portrait.defeated .ds-defeated-skull {
+  font-size: calc(var(--ds-portrait-size) * 0.35);
+}
+
+/* Mentor / retainer pair */
+#ds-combat-dock .ds-mentor-pair .ds-retainer-portrait::before {
+  width: calc(var(--ds-portrait-size) * 0.94);
+}
+
+#ds-combat-dock .ds-retainer-portrait-img {
+  width: calc(var(--ds-portrait-size) * 0.775);
+  height: calc(var(--ds-portrait-size) * 0.775);
+}
+
+#ds-combat-dock .ds-retainer-portrait .ds-portrait-name {
+  max-width: calc(var(--ds-portrait-size) * 0.775);
+}
+
+#ds-combat-dock .ds-retainer-portrait.defeated .ds-retainer-portrait-img .ds-defeated-skull {
+  font-size: calc(var(--ds-portrait-size) * 0.2);
+}
+
+/* Group pills */
+#ds-combat-dock .ds-group-container {
+  border-radius: calc(var(--ds-portrait-size) * 0.35);
+  min-height: var(--ds-portrait-size);
+}
+
+#ds-combat-dock .ds-group-container.multi-turn {
+  border-radius: calc(var(--ds-portrait-size) * 0.35);
+}
+
+#ds-combat-dock .ds-group-name {
+  font-size: calc(12px * var(--ds-scale));
+  max-width: calc(var(--ds-portrait-size) * 1.5);
+}
+
+#ds-combat-dock .ds-group-stamina {
+  font-size: calc(11px * var(--ds-scale));
+}
+
+/* Captain portrait (captain / non-minion group members) */
+#ds-combat-dock .ds-mini-portrait.captain .ds-mini-portrait-img {
+  width: calc(var(--ds-portrait-size) * 0.775);
+  height: calc(var(--ds-portrait-size) * 0.775);
+}
+
+/* Minion portrait in the 2x2 grid */
+#ds-combat-dock .ds-mini-portrait.minion .ds-mini-portrait-img {
+  width: calc(var(--ds-portrait-size) * 0.375);
+  height: calc(var(--ds-portrait-size) * 0.375);
+}
+
+#ds-combat-dock .ds-mini-portrait.captain.defeated .ds-defeated-skull {
+  font-size: calc(var(--ds-portrait-size) * 0.25);
+}
+
+#ds-combat-dock .ds-mini-portrait.minion.defeated .ds-defeated-skull {
+  font-size: calc(var(--ds-portrait-size) * 0.125);
+}
+
+/* -----------------------------------------------
+   Setup phase, drag & drop, undo
+   ----------------------------------------------- */
+
+/* Setup phase (encounter exists, not started): neutral portraits, no act/done states */
+#ds-combat-dock.setup .ds-portrait-img,
+#ds-combat-dock.setup .ds-retainer-portrait-img,
+#ds-combat-dock.setup .ds-group-container {
+  border-color: rgba(200, 200, 200, 0.35);
+}
+
+#ds-combat-dock .ds-dock-setup-label {
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.5px;
+}
+
+#ds-combat-dock .ds-dock-setup-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+#ds-combat-dock .ds-dock-btn.ds-begin-combat {
+  border-color: rgba(46, 204, 113, 0.7);
+  color: #2ecc71;
+}
+
+#ds-combat-dock .ds-dock-btn.ds-begin-combat:hover:not(:disabled) {
+  background: rgba(46, 204, 113, 0.2);
+}
+
+#ds-combat-dock .ds-dock-btn.ds-begin-combat:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#ds-combat-dock .ds-dock-waiting {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+}
+
+/* Drag & drop of combatants between groups (GM) */
+#ds-combat-dock [draggable="true"] {
+  -webkit-user-drag: element;
+}
+
+#ds-combat-dock.ds-dragging .ds-group-container,
+#ds-combat-dock.ds-dragging .ds-dock-side {
+  outline: 2px dashed rgba(255, 255, 255, 0.15);
+  outline-offset: -2px;
+}
+
+#ds-combat-dock .ds-drop-target {
+  outline: 2px dashed rgba(46, 204, 113, 0.9) !important;
+  outline-offset: -2px;
+  background: rgba(46, 204, 113, 0.08);
+}

@@ -1,0 +1,31 @@
+import assert from "node:assert/strict";
+import { setSelectedCondition, resizeConditionPalette } from "../scripts/fixes/condition-palette.mjs";
+const calls = [];
+const actor = (uuid, owner = true) => ({ uuid, isOwner: owner, effects: [], async toggleStatusEffect(id, options) { calls.push({ uuid, id, options }); } });
+const first = actor("first"), second = actor("second"), refused = actor("refused", false);
+globalThis.CONFIG = { statusEffects: [{ id: "slowed", _id: "slowed-effect" }] };
+globalThis.ui = { notifications: { warn: () => {} } };
+globalThis.window = { innerWidth: 1000, innerHeight: 800 };
+globalThis.game = { settings: { get: () => ({ uiScale: 1 }) } };
+globalThis.canvas = { ready: true, tokens: { controlled: [{ actor: first }, { actor: first }, { actor: second }, { actor: refused }] }, stage: { scale: { x: 2 } }, dimensions: { uiScale: 1 } };
+const palette = { style: {}, getBoundingClientRect: () => ({ left: 100, top: 100, right: 400, bottom: 400 }) };
+const toggleButton = { style: {}, getBoundingClientRect: () => ({ left: 100, top: 100, right: 135, bottom: 135 }) };
+// Match the native DOM order: the effects toggle precedes the actual palette.
+const hud = { element: { querySelector: selector => {
+  if (selector === '[data-palette="effects"]') return toggleButton;
+  if (selector === '.status-effects.palette[data-palette="effects"]') return palette;
+  if (selector === '[data-name="system.end.type"]') return { value: "save" };
+  throw new Error(`Unexpected selector: ${selector}`);
+} }, async render() {} };
+const pressed = { dataset: { statusId: "slowed" }, classList: { contains: () => false } };
+await setSelectedCondition(hud, { button: 2 }, pressed);
+assert.deepEqual(calls.map(c => c.uuid), ["first", "second"], "actor deduplication and ownership");
+assert.deepEqual(calls[0].options, { active: true, overlay: true, effectEnd: "save" });
+calls.length = 0; pressed.classList.contains = () => true;
+await setSelectedCondition(hud, { button: 0 }, pressed);
+assert.equal(calls.every(c => c.options.active === false), true, "opened token determines remove intent");
+resizeConditionPalette(hud); assert.equal(palette.style.scale, "0.5");
+assert.deepEqual(toggleButton.style, {}, "native condition-menu toggle must never be styled or repositioned");
+canvas.stage.scale.x = 0.5; resizeConditionPalette(hud); assert.equal(palette.style.scale, "2");
+assert.deepEqual(toggleButton.style, {}, "zoom changes leave the native toggle intact");
+console.log("CONDITION PALETTE TESTS PASSED");
