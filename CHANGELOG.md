@@ -7,16 +7,9 @@ All notable changes to this module are listed here, newest first.
 First public release.
 
 ### Changed
-- Renamed from Draw Steel: Local Fixes (`ds-local-fixes`) to Stef's Quality of Life Improvements for Draw Steel
-  (`stef-ds-qol`). Its version numbers restart at 1.0.0 (the private predecessor ended at 1.13.2).
 - Fix 3 now looks for Stef's Automation Suite for Draw Steel (`stef-ds-automation`) to hand teleports over to its
   ability library.
 - The Hero Tokens / Malice box setting hint now matches the clicks (click removes one, right-click adds one).
-
-### Migration
-- On the first load the Director's client copies the old module's world settings and every user's Hero Tokens /
-  Malice box position; each browser copies its own client settings. Rerun with
-  `game.modules.get("stef-ds-qol").api.migrateLegacy({ dryRun: true })`.
 
 ### Features
 - Public heroic resource rolls at turn start; quiet info and success banners during combat.

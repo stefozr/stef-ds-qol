@@ -288,8 +288,8 @@ version, and the console names the fixes to check.
 | Combat Tracker dock: Show Before Combat Starts | World | Fix 6: show the dock with a setup phase as soon as an encounter exists (on by default). |
 | Combat Tracker dock: Portrait Size | Client | Fix 6: portrait size in pixels (48 to 140, default 80); the dock scales with it. |
 
-Hidden: the dock width (client), the Combat Tools version already warned about (client), the Fix 14 box position (user
-flag) and the legacy migration marker (world).
+Hidden: the dock width (client), the Combat Tools version already warned about (client), and the Fix 14 box
+position (user flag).
 
 ## API
 
@@ -307,19 +307,6 @@ flag) and the legacy migration marker (world).
 | `dstdAuthor.check()` | Fix 10: whether the author shim is active. |
 | `pseudoCollections.check(doc)`, `.scan()` | Fix 11: link state of a document's effect lists; re-link every stale world item now. |
 | `metaBox.check()`, `.render()`, `.resetPosition()` | Fix 14. |
-| `migrateLegacy({ dryRun, force })` | Import the data of the old module id (see below). |
-
-## Upgrading from Draw Steel: Local Fixes (`ds-local-fixes`)
-
-1. Install this module, enable it and disable Draw Steel: Local Fixes. Do not run both: they apply the same patches.
-2. On the first load the Director's client copies the old module's world settings (Turn Activation, Show Before
-   Combat Starts) and every user's saved Hero Tokens / Malice box position (user flag `metaBox`). Each browser copies
-   its own client settings (collapse and compact cards, the Hero Tokens / Malice box, portrait size and dock width)
-   when it loads. Reload once afterwards.
-3. Abilities that got Fix 3's teleport effect keep it: the effect id is unchanged.
-4. To check, run `game.modules.get("stef-ds-qol").api.migrateLegacy({ dryRun: true })` in the console (F12); it reports
-   what would still be copied. `migrateLegacy({ force: true })` runs it again.
-5. Remove Draw Steel: Local Fixes.
 
 ## Known limitations
 
