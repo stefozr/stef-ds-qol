@@ -1,8 +1,8 @@
 {
   "id": "stef-ds-qol",
   "title": "Stef's Quality of Life Improvements for Draw Steel",
-  "description": "Small fixes and table conveniences for the Draw Steel system and the Combat Tools family: public heroic resource rolls, compact or collapsible ability cards in chat, a movable Hero Tokens / Malice box, a safer Combat Tracker dock with undo and a setup phase, hidden tokens that stay hidden, ring art in tracker portraits and more, each applied from outside so it survives updates. Stef's Quality of Life Improvements for Draw Steel is not affiliated with MCDM Productions, LLC. Draw Steel is a trademark of MCDM Productions, LLC.",
-  "version": "1.0.0",
+  "description": "Small fixes and table conveniences for the Draw Steel system and the Combat Tools family: public heroic resource rolls, compact or collapsible ability cards in chat, player colors and token portraits on chat cards, a movable Hero Tokens / Malice box, montage test and negotiation trackers, a safer Combat Tracker dock with undo and a setup phase, hidden tokens that stay hidden, ring art in tracker portraits and more, each applied from outside so it survives updates. Stef's Quality of Life Improvements for Draw Steel is not affiliated with MCDM Productions, LLC. Draw Steel is a trademark of MCDM Productions, LLC.",
+  "version": "1.1.0",
   "authors": [
     {
       "name": "Stefan",
@@ -23,7 +23,9 @@
     "styles/tracker-dock.css",
     "styles/chat-cards.css",
     "styles/compact-cards.css",
-    "styles/meta-currency-box.css"
+    "styles/meta-currency-box.css",
+    "styles/trackers.css",
+    "styles/chat-speakers.css"
   ],
   "languages": [
     {

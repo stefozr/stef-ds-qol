@@ -1,0 +1,106 @@
+<div class="dslf-tr-panel">
+  {{#if showHeader}}
+  <header class="dslf-tr-header">
+    {{#if img}}<img class="dslf-tr-npc-img" src="{{img}}" alt="">{{/if}}
+    {{#if isGM}}
+    <input type="text" class="dslf-tr-title-input" data-field="name" value="{{name}}" placeholder="{{localize 'DSLF.Negotiation.NamePlaceholder'}}" aria-label="{{localize 'DSLF.Negotiation.NamePlaceholder'}}">
+    {{#if linked}}
+    <button type="button" class="dslf-tr-icon" data-action="openNpc" data-tooltip="DSLF.Negotiation.OpenNpc"><i class="fa-solid fa-id-card" inert></i></button>
+    {{/if}}
+    {{else}}
+    <span class="dslf-tr-title">{{nameLabel}}</span>
+    {{/if}}
+  </header>
+  {{/if}}
+
+  {{#if isGM}}
+  <div class="dslf-tr-settings">
+    <select data-field="attitude" data-tooltip="DSLF.Negotiation.AttitudeHint">
+      <option value="" {{#unless attitude}}selected{{/unless}}>{{localize "DSLF.Negotiation.Attitude"}}</option>
+      {{#each attitudes}}
+      <option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}} · {{stats}}</option>
+      {{/each}}
+    </select>
+  </div>
+  {{/if}}
+
+  <div class="dslf-tr-rows">
+    {{#each values}}
+    {{#if show}}
+    <div class="dslf-tr-row dslf-tr-value-{{key}}">
+      {{#if ../isGM}}
+      <button type="button" class="dslf-tr-eye {{#if revealed}}on{{/if}}" data-action="reveal" data-key="{{key}}" data-tooltip="{{#if revealed}}DSLF.Trackers.Hide{{else}}DSLF.Trackers.Reveal{{/if}}"><i class="fa-solid {{#if revealed}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i></button>
+      {{/if}}
+      <span class="dslf-tr-label">{{label}}</span>
+      {{#if pips}}
+      <span class="dslf-tr-segments">{{#each pips}}<span class="dslf-tr-seg {{#if on}}on{{/if}}"></span>{{/each}}</span>
+      <span class="dslf-tr-value">{{value}}/{{max}}</span>
+      {{else}}
+      <span class="dslf-tr-number">
+        {{#if ../isGM}}<input type="number" min="0" step="1" data-field="impression" value="{{value}}">{{else}}{{value}}{{/if}}
+      </span>
+      {{/if}}
+      {{#if ../isGM}}
+      <span class="dslf-tr-steps">
+        <button type="button" data-action="step" data-key="{{key}}" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus" inert></i></button>
+        <button type="button" data-action="step" data-key="{{key}}" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus" inert></i></button>
+        <button type="button" data-action="resetValue" data-key="{{key}}" data-tooltip="DSLF.Negotiation.ResetValue" {{#unless changed}}disabled{{/unless}}><i class="fa-solid fa-rotate-left" inert></i></button>
+      </span>
+      {{/if}}
+    </div>
+    {{/if}}
+    {{/each}}
+  </div>
+
+  {{#if showStatus}}
+  <div class="dslf-tr-outcome dslf-tr-status-{{status.key}}">
+    <span class="dslf-tr-outcome-label">{{status.label}}</span>
+  </div>
+  {{/if}}
+
+  {{#each lists}}
+  {{#if show}}
+  <section class="dslf-tr-section">
+    <h4 class="dslf-tr-section-title">{{label}}</h4>
+    <ul class="dslf-tr-list">
+      {{#each entries}}
+      <li class="dslf-tr-entry {{#if used}}used{{/if}}" data-list="{{../list}}" data-id="{{id}}">
+        {{#if @root.isGM}}
+        <button type="button" class="dslf-tr-icon dslf-tr-check {{#if used}}on{{/if}}" data-action="useEntry" data-tooltip="{{../usedLabel}}"><i class="fa-{{#if used}}solid fa-square-check{{else}}regular fa-square{{/if}}" inert></i></button>
+        {{else}}
+        <span class="dslf-tr-badge dslf-tr-badge-{{../badge}}">{{../badge}}</span>
+        {{/if}}
+        <span class="dslf-tr-entry-text">{{text}}</span>
+        {{#if @root.isGM}}
+        <button type="button" class="dslf-tr-eye {{#if revealed}}on{{/if}}" data-action="revealEntry" data-tooltip="{{#if revealed}}DSLF.Trackers.Hide{{else}}DSLF.Trackers.Reveal{{/if}}"><i class="fa-solid {{#if revealed}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i></button>
+        <button type="button" class="dslf-tr-icon dslf-tr-remove" data-action="removeEntry" data-tooltip="DSLF.Trackers.Remove"><i class="fa-solid fa-xmark" inert></i></button>
+        {{/if}}
+      </li>
+      {{/each}}
+    </ul>
+    {{#if @root.isGM}}
+    <div class="dslf-tr-add">
+      <select data-field="addMotivation" data-list="{{list}}" aria-label="{{localize 'DSLF.Negotiation.AddFromList'}}">
+        <option value="" selected>{{localize "DSLF.Negotiation.AddFromList"}}</option>
+        {{#each @root.available}}<option value="{{key}}">{{label}}</option>{{/each}}
+      </select>
+      <input type="text" data-custom data-list="{{list}}" placeholder="{{localize 'DSLF.Negotiation.CustomPlaceholder'}}">
+      <button type="button" class="dslf-tr-icon" data-action="addCustom" data-tooltip="DSLF.Negotiation.AddCustom"><i class="fa-solid fa-plus" inert></i></button>
+    </div>
+    {{/if}}
+  </section>
+  {{/if}}
+  {{/each}}
+
+  {{#if nothingShown}}
+  <p class="dslf-tr-empty">{{localize "DSLF.Negotiation.Nothing"}}</p>
+  {{/if}}
+
+  {{#if isGM}}
+  {{#unless linked}}
+  <div class="dslf-tr-drop">
+    <i class="fa-solid fa-hand-pointer" inert></i> {{localize "DSLF.Negotiation.DropHint"}}
+  </div>
+  {{/unless}}
+  {{/if}}
+</div>

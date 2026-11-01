@@ -1,0 +1,411 @@
+/* Stef's Quality of Life Improvements for Draw Steel — Fix 15 montage tracker, Fix 16 negotiation tracker. */
+
+.dslf-tracker {
+  --dslf-tr-good: #3f9a5b;
+  --dslf-tr-bad: #c8433b;
+  --dslf-tr-accent: #c28a1e;
+  --dslf-tr-dim: color-mix(in srgb, currentColor 62%, transparent);
+  --dslf-tr-line: color-mix(in srgb, currentColor 18%, transparent);
+  --dslf-tr-fill: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.dslf-tracker .window-content {
+  padding: 0.6rem 0.75rem 0.75rem;
+}
+
+.dslf-tracker .dslf-tr-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+/* ---------- small icon buttons (inputs and selects keep the core look) ---------- */
+
+.dslf-tracker .dslf-tr-panel button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.2rem;
+  border-radius: 4px;
+  color: var(--dslf-tr-dim);
+  cursor: pointer;
+}
+
+.dslf-tracker .dslf-tr-panel button:hover:not(:disabled),
+.dslf-tracker .dslf-tr-panel button:focus-visible {
+  color: inherit;
+  background: var(--dslf-tr-fill);
+}
+
+.dslf-tracker .dslf-tr-panel button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ---------- header and settings ---------- */
+
+.dslf-tracker .dslf-tr-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dslf-tracker .dslf-tr-npc-img {
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--dslf-tr-line);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.dslf-tracker .dslf-tr-title,
+.dslf-tracker .dslf-tr-title-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-weight: 700;
+}
+
+.dslf-tracker .dslf-tr-title {
+  font-size: 1.05rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dslf-tracker .dslf-tr-settings {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dslf-tracker .dslf-tr-settings select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dslf-tracker .dslf-tr-count {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--dslf-tr-dim);
+}
+
+.dslf-tracker .dslf-tr-count input {
+  width: 3.2rem;
+  text-align: center;
+}
+
+/* ---------- value rows ---------- */
+
+.dslf-tracker .dslf-tr-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.dslf-tracker .dslf-tr-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.6rem;
+}
+
+.dslf-tracker .dslf-tr-label {
+  flex: 0 0 5.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dslf-tr-dim);
+}
+
+.dslf-tracker .dslf-tr-segments {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dslf-tracker .dslf-tr-seg {
+  flex: 1 1 0;
+  height: 0.65rem;
+  border-radius: 2px;
+  background: var(--dslf-tr-fill);
+  box-shadow: inset 0 0 0 1px var(--dslf-tr-line);
+}
+
+.dslf-tracker .dslf-tr-seg.on {
+  background: var(--dslf-tr-accent);
+}
+
+.dslf-tracker .dslf-tr-bar-successes .dslf-tr-seg.on,
+.dslf-tracker .dslf-tr-value-interest .dslf-tr-seg.on {
+  background: var(--dslf-tr-good);
+}
+
+.dslf-tracker .dslf-tr-bar-failures .dslf-tr-seg.on {
+  background: var(--dslf-tr-bad);
+}
+
+.dslf-tracker .dslf-tr-value,
+.dslf-tracker .dslf-tr-round-value {
+  flex: 0 0 auto;
+  min-width: 2.2rem;
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.dslf-tracker .dslf-tr-round-value,
+.dslf-tracker .dslf-tr-timeup,
+.dslf-tracker .dslf-tr-number {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.dslf-tracker .dslf-tr-number {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.dslf-tracker .dslf-tr-number input {
+  width: 3.2rem;
+  text-align: center;
+}
+
+.dslf-tracker .dslf-tr-timeup {
+  color: var(--dslf-tr-bad);
+  font-weight: 700;
+}
+
+.dslf-tracker .dslf-tr-steps {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 1px;
+}
+
+.dslf-tracker .dslf-tr-eye {
+  flex: 0 0 auto;
+  opacity: 0.6;
+}
+
+.dslf-tracker .dslf-tr-panel .dslf-tr-eye.on {
+  color: var(--dslf-tr-accent);
+  opacity: 1;
+}
+
+/* ---------- outcome / status ---------- */
+
+.dslf-tracker .dslf-tr-outcome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--dslf-tr-accent);
+  background: var(--dslf-tr-fill);
+}
+
+.dslf-tracker .dslf-tr-outcome-totalSuccess,
+.dslf-tracker .dslf-tr-status-agreed {
+  border-left-color: var(--dslf-tr-good);
+}
+
+.dslf-tracker .dslf-tr-outcome-totalFailure,
+.dslf-tracker .dslf-tr-status-noDeal,
+.dslf-tracker .dslf-tr-status-outOfPatience {
+  border-left-color: var(--dslf-tr-bad);
+}
+
+.dslf-tracker .dslf-tr-outcome-label {
+  font-weight: 700;
+}
+
+.dslf-tracker .dslf-tr-outcome-victories {
+  color: var(--dslf-tr-dim);
+}
+
+.dslf-tracker .dslf-tr-panel .dslf-tr-award {
+  margin-left: auto;
+  padding: 0 0.5rem;
+  color: var(--dslf-tr-accent);
+  border: 1px solid currentColor;
+}
+
+.dslf-tracker .dslf-tr-awarded {
+  margin-left: auto;
+  color: var(--dslf-tr-good);
+}
+
+/* ---------- lists ---------- */
+
+.dslf-tracker .dslf-tr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dslf-tracker .dslf-tr-hero,
+.dslf-tracker .dslf-tr-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.7rem;
+  padding: 0.1rem 0.2rem;
+  border-radius: 6px;
+}
+
+.dslf-tracker .dslf-tr-hero:hover,
+.dslf-tracker .dslf-tr-entry:hover {
+  background: var(--dslf-tr-fill);
+}
+
+.dslf-tracker .dslf-tr-hero.acted .dslf-tr-name,
+.dslf-tracker .dslf-tr-hero.acted .dslf-tr-portrait {
+  opacity: 0.5;
+}
+
+.dslf-tracker .dslf-tr-entry.used .dslf-tr-entry-text {
+  color: var(--dslf-tr-dim);
+  text-decoration: line-through;
+}
+
+.dslf-tracker .dslf-tr-portrait {
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  border: none;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  pointer-events: none;
+}
+
+.dslf-tracker .dslf-tr-hero-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dslf-tracker .dslf-tr-name,
+.dslf-tracker .dslf-tr-entry-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dslf-tracker .dslf-tr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.dslf-tracker .dslf-tr-chip {
+  padding: 0 0.3rem;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--dslf-tr-accent) 18%, transparent);
+  color: var(--dslf-tr-accent);
+  font-size: 0.65rem;
+  line-height: 1.3;
+}
+
+.dslf-tracker .dslf-tr-panel .dslf-tr-icon.on,
+.dslf-tracker .dslf-tr-acted-mark {
+  color: var(--dslf-tr-good);
+}
+
+.dslf-tracker .dslf-tr-panel .dslf-tr-roll-btn {
+  color: var(--dslf-tr-accent);
+}
+
+.dslf-tracker .dslf-tr-panel .dslf-tr-remove:hover {
+  color: var(--dslf-tr-bad);
+}
+
+.dslf-tracker .dslf-tr-rollform {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.25rem 0.2rem 0.35rem 2.3rem;
+}
+
+.dslf-tracker .dslf-tr-rollform select {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.dslf-tracker .dslf-tr-panel .dslf-tr-go {
+  flex: 0 0 auto;
+  padding: 0 0.5rem;
+  color: var(--dslf-tr-accent);
+  border: 1px solid currentColor;
+}
+
+.dslf-tracker .dslf-tr-section-title {
+  margin: 0.2rem 0 0.1rem;
+  padding: 0 0 0.1rem;
+  border-bottom: 1px solid var(--dslf-tr-line);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dslf-tr-dim);
+}
+
+.dslf-tracker .dslf-tr-badge {
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.1rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--dslf-tr-good) 22%, transparent);
+  color: var(--dslf-tr-good);
+}
+
+.dslf-tracker .dslf-tr-badge-P {
+  background: color-mix(in srgb, var(--dslf-tr-bad) 22%, transparent);
+  color: var(--dslf-tr-bad);
+}
+
+.dslf-tracker .dslf-tr-add {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.15rem;
+}
+
+.dslf-tracker .dslf-tr-add select,
+.dslf-tracker .dslf-tr-add input {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.dslf-tracker .dslf-tr-drop,
+.dslf-tracker .dslf-tr-empty {
+  margin: 0;
+  padding: 0.3rem;
+  border: 1px dashed var(--dslf-tr-line);
+  border-radius: 6px;
+  color: var(--dslf-tr-dim);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.dslf-tracker .dslf-tr-empty {
+  border: none;
+}

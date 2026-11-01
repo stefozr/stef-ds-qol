@@ -19,6 +19,9 @@
  *   Fix 12 condition-palette.mjs     core: the condition palette stays readable; Shift-click sets selected actors
  *   Fix 13 compact-ability-cards.mjs system + Draw Steel Plus: compact ability cards in chat (registered before Fix 9)
  *   Fix 14 meta-currency-box.mjs     system: movable Hero Tokens / Malice box (replaces the players-list strip)
+ *   Fix 15 montage-tracker.mjs       system: montage test tracker (limits, rounds, hero tests, Victories)
+ *   Fix 16 negotiation-tracker.mjs   system: negotiation tracker (interest, patience, motivations, pitfalls; from an NPC)
+ *   Fix 17 chat-speaker-colors.mjs   core + system: chat cards get the speaker's player color and token portrait
  *
  * 1.11.0: the Director is warned once per client and Combat Tools version when that version is not one the Combat
  * Tools fixes were checked against (shared.mjs DSCT_VERIFIED).
@@ -44,6 +47,9 @@ import { registerCollapseAbilityCards, collapseCardsApi } from "./fixes/collapse
 import { registerDstdAuthorShim, dstdAuthorApi } from "./fixes/dstd-author-shim.mjs";
 import { registerPseudoCollectionRebind, pseudoCollectionApi } from "./fixes/pseudo-collection-rebind.mjs";
 import { registerMetaCurrencyBox, metaBoxApi } from "./fixes/meta-currency-box.mjs";
+import { registerMontageTracker, montageApi } from "./fixes/montage-tracker.mjs";
+import { registerNegotiationTracker, negotiationApi } from "./fixes/negotiation-tracker.mjs";
+import { registerChatSpeakerColors, chatSpeakersApi } from "./fixes/chat-speaker-colors.mjs";
 
 // Registered before the fixes, so its init/ready hooks run first.
 const legacy = registerLegacyMigration({ moduleId: MODULE_ID, legacyIds: ["ds-local-fixes"], version: "1.0.0" });
@@ -63,6 +69,9 @@ registerCollapseAbilityCards();
 registerDstdAuthorShim();
 registerPseudoCollectionRebind();
 registerMetaCurrencyBox();
+registerMontageTracker();
+registerNegotiationTracker();
+registerChatSpeakerColors();
 
 Hooks.once("init", () => {
   game.settings.register(MODULE_ID, "dsctVersionWarned", { scope: "client", config: false, type: String, default: "" });
@@ -78,6 +87,9 @@ Hooks.once("init", () => {
       dstdAuthor: dstdAuthorApi,
       pseudoCollections: pseudoCollectionApi,
       metaBox: metaBoxApi,
+      montage: montageApi,
+      negotiation: negotiationApi,
+      chatSpeakers: chatSpeakersApi,
       migrateLegacy: legacy.migrate,
     };
   }

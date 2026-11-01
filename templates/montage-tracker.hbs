@@ -1,0 +1,111 @@
+<div class="dslf-tr-panel">
+  {{#if isGM}}
+  <div class="dslf-tr-settings">
+    <input type="text" class="dslf-tr-title-input" data-field="title" value="{{title}}" placeholder="{{localize 'DSLF.Montage.TitlePlaceholder'}}" aria-label="{{localize 'DSLF.Montage.TitlePlaceholder'}}">
+  </div>
+  <div class="dslf-tr-settings">
+    <select data-field="difficulty" data-tooltip="DSLF.Montage.DifficultyHint">
+      {{#each difficulties}}
+      <option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}} · {{limits}}</option>
+      {{/each}}
+    </select>
+    <label class="dslf-tr-count" data-tooltip="DSLF.Montage.HeroCountHint">
+      <i class="fa-solid fa-users" inert></i>
+      <input type="number" min="1" step="1" data-field="heroCount" value="{{heroCount}}" placeholder="{{heroCountAuto}}">
+    </label>
+  </div>
+  {{/if}}
+
+  <div class="dslf-tr-rows">
+    {{#each bars}}
+    {{#if show}}
+    <div class="dslf-tr-row dslf-tr-bar-{{key}}">
+      {{#if ../isGM}}
+      <button type="button" class="dslf-tr-eye {{#if revealed}}on{{/if}}" data-action="reveal" data-key="{{key}}" data-tooltip="{{#if revealed}}DSLF.Trackers.Hide{{else}}DSLF.Trackers.Reveal{{/if}}"><i class="fa-solid {{#if revealed}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i></button>
+      {{/if}}
+      <span class="dslf-tr-label">{{label}}</span>
+      <span class="dslf-tr-segments">{{#each segments}}<span class="dslf-tr-seg {{#if on}}on{{/if}}"></span>{{/each}}</span>
+      <span class="dslf-tr-value">{{value}}/{{max}}</span>
+      {{#if ../isGM}}
+      <span class="dslf-tr-steps">
+        <button type="button" data-action="step" data-key="{{key}}" data-delta="-1" aria-label="-1"><i class="fa-solid fa-minus" inert></i></button>
+        <button type="button" data-action="step" data-key="{{key}}" data-delta="1" aria-label="+1"><i class="fa-solid fa-plus" inert></i></button>
+      </span>
+      {{/if}}
+    </div>
+    {{/if}}
+    {{/each}}
+
+    {{#if round.show}}
+    <div class="dslf-tr-row dslf-tr-round">
+      {{#if isGM}}
+      <button type="button" class="dslf-tr-eye {{#if round.revealed}}on{{/if}}" data-action="reveal" data-key="round" data-tooltip="{{#if round.revealed}}DSLF.Trackers.Hide{{else}}DSLF.Trackers.Reveal{{/if}}"><i class="fa-solid {{#if round.revealed}}fa-eye{{else}}fa-eye-slash{{/if}}" inert></i></button>
+      {{/if}}
+      <span class="dslf-tr-label">{{localize "DSLF.Montage.Round"}}</span>
+      {{#if round.over}}
+      <span class="dslf-tr-timeup">{{localize "DSLF.Montage.TimeUp"}}</span>
+      {{else}}
+      <span class="dslf-tr-round-value">{{round.value}} / {{round.max}}</span>
+      {{/if}}
+      {{#if isGM}}
+      <span class="dslf-tr-steps">
+        <button type="button" data-action="round" data-delta="-1" data-tooltip="DSLF.Montage.PrevRound" {{#unless round.canBack}}disabled{{/unless}}><i class="fa-solid fa-backward-step" inert></i></button>
+        <button type="button" data-action="round" data-delta="1" data-tooltip="DSLF.Montage.NextRound" {{#unless round.canForward}}disabled{{/unless}}><i class="fa-solid fa-forward-step" inert></i></button>
+      </span>
+      {{/if}}
+    </div>
+    {{/if}}
+  </div>
+
+  {{#if outcome.show}}
+  <div class="dslf-tr-outcome dslf-tr-outcome-{{outcome.key}}">
+    <span class="dslf-tr-outcome-label">{{outcome.label}}</span>
+    {{#if outcome.victories}}<span class="dslf-tr-outcome-victories">{{outcome.victoriesLabel}}</span>{{/if}}
+    {{#if outcome.canAward}}
+    <button type="button" class="dslf-tr-award" data-action="award"><i class="fa-solid fa-trophy" inert></i> {{localize "DSLF.Montage.Award"}}</button>
+    {{else if outcome.awarded}}
+    <span class="dslf-tr-awarded"><i class="fa-solid fa-check" inert></i> {{localize "DSLF.Montage.Awarded"}}</span>
+    {{/if}}
+  </div>
+  {{/if}}
+
+  <ul class="dslf-tr-list dslf-tr-heroes">
+    {{#each heroes}}
+    <li class="dslf-tr-hero {{#if acted}}acted{{/if}}" data-uuid="{{uuid}}">
+      <img class="dslf-tr-portrait" src="{{img}}" alt="">
+      <span class="dslf-tr-hero-main">
+        <span class="dslf-tr-name">{{name}}</span>
+        {{#if skillLabels.length}}
+        <span class="dslf-tr-chips">{{#each skillLabels}}<span class="dslf-tr-chip" data-tooltip="DSLF.Montage.UsedSkill">{{this}}</span>{{/each}}</span>
+        {{/if}}
+      </span>
+      {{#if canRoll}}
+      <button type="button" class="dslf-tr-icon dslf-tr-roll-btn {{#if rolling}}on{{/if}}" data-action="openRoll" data-tooltip="DSLF.Montage.RollTest"><i class="fa-solid fa-dice-d10" inert></i></button>
+      {{/if}}
+      {{#if ../isGM}}
+      <button type="button" class="dslf-tr-icon dslf-tr-check {{#if acted}}on{{/if}}" data-action="toggleActed" data-tooltip="DSLF.Montage.Acted"><i class="fa-{{#if acted}}solid fa-square-check{{else}}regular fa-square{{/if}}" inert></i></button>
+      <button type="button" class="dslf-tr-icon dslf-tr-remove" data-action="removeHero" data-tooltip="DSLF.Trackers.Remove"><i class="fa-solid fa-xmark" inert></i></button>
+      {{else if acted}}
+      <i class="dslf-tr-acted-mark fa-solid fa-check" data-tooltip="DSLF.Montage.Acted"></i>
+      {{/if}}
+    </li>
+    {{#if rolling}}
+    <li class="dslf-tr-rollform" data-uuid="{{uuid}}">
+      <select data-field="rollChr" aria-label="{{localize 'DSLF.Montage.Characteristic'}}">
+        {{#each ../characteristics}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+      <select data-field="rollDiff" aria-label="{{localize 'DSLF.Montage.TestDifficulty'}}">
+        {{#each ../testDifficulties}}<option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+      <button type="button" class="dslf-tr-go" data-action="roll"><i class="fa-solid fa-dice-d10" inert></i> {{localize "DSLF.Montage.Roll"}}</button>
+    </li>
+    {{/if}}
+    {{/each}}
+  </ul>
+
+  {{#if isGM}}
+  <div class="dslf-tr-drop">
+    <i class="fa-solid fa-hand-pointer" inert></i> {{localize "DSLF.Montage.DropHint"}}
+  </div>
+  {{/if}}
+</div>

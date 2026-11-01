@@ -99,6 +99,117 @@
       "SpendTitle": "Spend a Hero Token",
       "SpendConfirm": "Spend one hero token? The Director is told in chat.",
       "ResetPosition": "Reset box position"
+    },
+    "Trackers": {
+      "Rules": "Open the rules",
+      "Reveal": "Hidden from players: click to reveal",
+      "Hide": "Shown to players: click to hide",
+      "Remove": "Remove",
+      "NoGM": "No Director is connected to record this.",
+      "NoRules": "The rules page was not found in the Draw Steel journals."
+    },
+    "Montage": {
+      "Title": "Montage test",
+      "TitlePlaceholder": "Montage test",
+      "DifficultyHint": "Montage difficulty: success / failure limits for the hero count",
+      "HeroCountHint": "Hero count for the limits (empty: the heroes in the list)",
+      "Difficulty": {
+        "easy": "Easy",
+        "moderate": "Moderate",
+        "hard": "Hard"
+      },
+      "Successes": "Successes",
+      "Failures": "Failures",
+      "Round": "Round",
+      "TimeUp": "Time is up",
+      "PrevRound": "Previous round",
+      "NextRound": "Next round (every hero may act again)",
+      "Outcome": {
+        "totalSuccess": "Total success",
+        "partialSuccess": "Partial success",
+        "totalFailure": "Total failure"
+      },
+      "VictoryOne": "{count} Victory",
+      "VictoryMany": "{count} Victories",
+      "Award": "Award",
+      "AwardConfirm": "Give {victories} to each of the {heroes} heroes in the montage?",
+      "AwardChat": "Each hero earns {victories}: {names}.",
+      "Awarded": "Awarded",
+      "UsedSkill": "Skill already used in this montage",
+      "RollTest": "Roll a test",
+      "Acted": "Acted this round",
+      "Characteristic": "Characteristic",
+      "TestDifficulty": "Test difficulty",
+      "Roll": "Roll",
+      "DropHint": "Drop heroes here",
+      "AddParty": "Add the party's heroes",
+      "ResetCounters": "Restart (counters, rounds, used skills)",
+      "End": "End montage",
+      "EndConfirm": "End the montage test? It closes for everyone and its tracker is cleared.",
+      "NoTier": "The test result could not be read; adjust the montage by hand.",
+      "Settings": {
+        "Name": "Montage test tracker",
+        "Hint": "Adds a montage test button to the Token controls. The Director starts a montage and its window opens on every screen: success and failure limits, rounds, heroes and their tests, outcome and Victories. Players roll tests for their own heroes from it and can reopen the window with the same button."
+      },
+      "Start": "Start a montage test",
+      "Open": "Open the montage test"
+    },
+    "Negotiation": {
+      "Title": "Negotiation",
+      "NamePlaceholder": "NPC name",
+      "OpenNpc": "Open the NPC sheet",
+      "AttitudeHint": "Attitude: sets interest / patience",
+      "Attitude": "Attitude",
+      "Attitudes": {
+        "hostile": "Hostile",
+        "suspicious": "Suspicious",
+        "neutral": "Neutral",
+        "open": "Open",
+        "friendly": "Friendly",
+        "trusting": "Trusting"
+      },
+      "Values": {
+        "interest": "Interest",
+        "patience": "Patience",
+        "impression": "Impression"
+      },
+      "ResetValue": "Back to the starting value",
+      "Motivations": "Motivations",
+      "Pitfalls": "Pitfalls",
+      "Appealed": "Appealed to",
+      "Triggered": "Triggered",
+      "AddFromList": "Add from the list",
+      "CustomPlaceholder": "or a custom one",
+      "AddCustom": "Add the custom entry",
+      "Nothing": "The Director has not revealed anything yet.",
+      "DropHint": "Drop an NPC here to load its negotiation stats",
+      "Unlink": "Unlink the NPC (keep the numbers)",
+      "End": "End negotiation",
+      "EndConfirm": "End the negotiation? It closes for everyone and its tracker is cleared.",
+      "Status": {
+        "agreed": "Interest 5: they agree",
+        "noDeal": "Interest 0: no deal",
+        "outOfPatience": "Patience 0: the negotiation ends"
+      },
+      "Settings": {
+        "Name": "Negotiation tracker",
+        "Hint": "Adds a negotiation button to the Token controls. The Director starts a negotiation and its window opens on every screen with interest, patience, impression, motivations and pitfalls; drop an NPC on it to load its stats. Players see only what the Director reveals and can reopen the window with the same button."
+      },
+      "Start": "Start a negotiation",
+      "Open": "Open the negotiation"
+    },
+    "ChatSpeakers": {
+      "PanToToken": "Pan to this token",
+      "Settings": {
+        "Colors": {
+          "Name": "Player colors on chat cards",
+          "Hint": "Chat cards get a border, and the speaker name a color, in the color of the speaker's player: the player whose character it is or who owns it; NPC and monster cards use the color of the Director who posted them. Per client."
+        },
+        "Portraits": {
+          "Name": "Token portraits on chat cards",
+          "Hint": "Show the speaking token's image left of the speaker name on chat cards (ring art for ring tokens). Click it to pan to the token. Per client."
+        }
+      }
     }
   }
 }

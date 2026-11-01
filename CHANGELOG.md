@@ -2,6 +2,23 @@
 
 All notable changes to this module are listed here, newest first.
 
+## [1.1.0] - 2026-11-01
+
+### Added
+- Montage test tracker (Fix 15): the Director starts it from the Token controls and it opens on every screen.
+  Success and failure limits for the montage difficulty and hero count, two rounds, heroes added from the party or
+  by drag and drop, tests rolled from the tracker through the system's Power Roll dialog (players roll for their own
+  heroes), skills already used, outcome and a Victory award. The Director chooses what players see.
+- Negotiation tracker (Fix 16): drop an NPC to load its interest, patience, impression, motivations and pitfalls, or
+  set an attitude; adjust values, mark motivations appealed to and pitfalls triggered, and reveal each value and entry
+  to the players.
+- Player colors and token portraits on chat cards (Fix 17): every card with a speaker gets a border and a name in
+  the color of the speaker's player (NPCs and monsters: the Director who posted them) and the speaking token's
+  image; click it to pan to the token. Two client settings, both on.
+- Both trackers are standard windows that remember their position per user; closing one only hides it on that
+  screen, and the Token-controls button (also shown to players while a tracker runs) reopens it. Each links to the
+  system's rules page.
+
 ## [1.0.0] - 2026-10-31
 
 First public release.

@@ -25,6 +25,11 @@ what it patches is there (and, where it matters, which version it is) and steps 
   selected token.
 - **Fix 13** Compact ability cards in chat (on by default).
 - **Fix 14** A movable Hero Tokens / Malice box.
+- **Fix 15** A montage test tracker: limits for the hero count, rounds, tests rolled from the tracker, outcome and
+  Victories.
+- **Fix 16** A negotiation tracker: drop an NPC to load its interest, patience, impression, motivations and pitfalls;
+  players see only what the Director reveals.
+- **Fix 17** Chat cards get the color of the speaker's player (border and name) and the speaking token's portrait.
 
 ## Installation
 
@@ -271,6 +276,77 @@ the strip under the players list.
 **Applies to.** The Draw Steel system. If Draw Steel Plus is active with its own box on, this box stays closed. API:
 `api.metaBox.check()`, `.resetPosition()`.
 
+### Fix 15: montage test tracker
+
+**Problem.** The system has no tool to run a montage test at the table.
+
+**What it changes.** The Director gets a **montage test** button in the Token controls. It starts a montage and opens
+its window on every screen (heroes of the primary party are added). **End montage** in the window's header menu ends
+it and closes the window everywhere. Closing the window only hides it on that screen; the same button reopens it, and
+players get the button too while a montage runs. Each user's window position and width are remembered.
+
+- Director: title, difficulty (Easy 5/5, Moderate 6/4, Hard 7/3 successes / failures, adjusted by one for each hero
+  above or below five, never below two) and hero count (empty = the heroes in the list). Successes and failures as
+  bars with −/+, the round (two rounds) with previous / next; next round lets every hero act again.
+- Each bar and the round have an eye: players see them only once revealed.
+- Heroes: drop a hero actor or token on the window, or use **Add the party's heroes** in the header menu. Each row shows the skills
+  already used in this montage, an "acted" checkbox and a remove button.
+- Rolling: the dice button opens a small form (characteristic, test difficulty), then the system's own Power Roll
+  dialog (skill, edges, banes). The result counts as a success at tier 1+ (easy test), 2+ (medium) or 3+ (hard).
+  Players roll for their own heroes; the active Director's client records the result.
+- Outcome: total success at the success limit; at the failure limit or when time is up, partial success with at
+  least two more successes than failures, otherwise total failure. **Award** gives each hero in the list the Victories
+  for the outcome (Easy 1 / 0, Moderate 1 / 1, Hard 2 / 1 for total / partial success) and posts a chat line.
+  Players see the outcome once both bars are revealed.
+- The header menu also opens the montage rules page of the system's rules journal and restarts the counters.
+
+**Applies to.** The Draw Steel system. World setting **Montage test tracker** (on) shows the button. API:
+`api.montage.start()`, `.open()`, `.end()`, `.check()`.
+
+### Fix 16: negotiation tracker
+
+**Problem.** NPCs carry negotiation stats on their sheet, but the system has no tool to run a negotiation at the
+table.
+
+**What it changes.** The Director gets a **negotiation** button in the Token controls; it starts a negotiation and
+opens its window on every screen. **End negotiation** in the header menu ends it. As with the montage, closing the
+window only hides it on that screen and the button (players get it too while a negotiation runs) reopens it.
+
+- Drop an NPC (actor or token) on the window: its name, portrait, interest, patience, impression, motivations and
+  pitfalls are copied into the tracker. The NPC itself is never changed. Without an NPC, type a name and pick an
+  attitude (Hostile 1/2, Suspicious 2/2, Neutral 2/3, Open 3/3, Friendly 3/4, Trusting 3/5 interest / patience).
+- Interest and patience (0 to 5) as pips, impression as a number, each with −/+, back to the starting value, and an
+  eye to reveal it to players.
+- Motivations and pitfalls: add from the system's list (each one only once across both lists) or type a custom one.
+  Each entry has a checkbox (appealed to / triggered), an eye (discovered by the players) and a remove button.
+- Players see the NPC name and portrait, the revealed values and the discovered motivations (M) and pitfalls (P).
+- A status line shows interest 5 (they agree), interest 0 (no deal) or patience 0 (the negotiation ends).
+- The header menu opens the negotiation rules page and unlinks the NPC.
+
+**Applies to.** The Draw Steel system. World setting **Negotiation tracker** (on) shows the button. API:
+`api.negotiation.start()`, `.open()`, `.end()`, `.fromNpc(actor)`, `.check()`.
+
+Both trackers follow the features of Draw Steel Plus's montage and negotiation panels; the code is this module's own.
+
+### Fix 17: player colors and token portraits on chat cards
+
+**Problem.** Only plain out-of-character messages get their author's color as a border. Ability cards, tests and
+every other card keep the neutral border, so it is hard to see at a glance who used what.
+
+**What it changes.** Every chat card with a speaker (ability cards, tests, saves, damage, in-character chat) gets:
+
+- a border, and the speaker name, in the color of the speaker's player: the player whose assigned character it is,
+  else a player who owns it (a logged-in one first). A card the Director posts for a hero still gets that hero's
+  player color. NPC and monster cards get the color of the Director who posted them.
+- the speaking token's image left of the name (the ring art for ring tokens, else the token image, else the
+  prototype token, else the actor portrait). Click it to pan to the token on the viewed scene.
+
+Two client settings, **Player colors on chat cards** and **Token portraits on chat cards** (both on). Cards update
+in place when a setting, a player's color or assigned character, or an actor's ownership changes.
+
+**Applies to.** Core chat and the Draw Steel system's cards, in the chat log, popouts and notifications. API:
+`api.chatSpeakers.check(messageId)`, `.refreshAll()`.
+
 ## Combat Tools version warning
 
 Fixes 2, 3, 5 and 8 depend on how Combat Tools works inside, so they were checked against Combat Tools 1.2.3, 1.2.6,
@@ -284,12 +360,16 @@ version, and the console names the fixes to check.
 | Collapse ability cards in chat | Client | Fix 9: Off / Effects only / All. |
 | Compact ability cards in chat | Client | Fix 13: on by default. |
 | Movable Hero Tokens / Malice box | Client | Fix 14: on by default. |
+| Player colors on chat cards | Client | Fix 17: on by default. |
+| Token portraits on chat cards | Client | Fix 17: on by default. |
+| Montage test tracker | World | Fix 15: the montage test button in the Token controls (on by default). |
+| Negotiation tracker | World | Fix 16: the negotiation button in the Token controls (on by default). |
 | Combat Tracker dock: Turn Activation | World | Fix 6: double-click (default), single click, click with confirmation, Ctrl/Shift + click. |
 | Combat Tracker dock: Show Before Combat Starts | World | Fix 6: show the dock with a setup phase as soon as an encounter exists (on by default). |
 | Combat Tracker dock: Portrait Size | Client | Fix 6: portrait size in pixels (48 to 140, default 80); the dock scales with it. |
 
-Hidden: the dock width (client), the Combat Tools version already warned about (client), and the Fix 14 box
-position (user flag).
+Hidden: the dock width (client), the Combat Tools version already warned about (client), the running montage and
+negotiation (world), the Fix 14 box position and the Fix 15 and 16 window positions (user flags).
 
 ## API
 
@@ -307,6 +387,9 @@ position (user flag).
 | `dstdAuthor.check()` | Fix 10: whether the author shim is active. |
 | `pseudoCollections.check(doc)`, `.scan()` | Fix 11: link state of a document's effect lists; re-link every stale world item now. |
 | `metaBox.check()`, `.render()`, `.resetPosition()` | Fix 14. |
+| `chatSpeakers.check(messageId)`, `.refreshAll()` | Fix 17: chosen player, color and portrait of a message (default: the last); re-apply to every rendered card. |
+| `montage.start()`, `.open()`, `.end()`, `.check()` | Fix 15: start or end the montage (Director); reopen its window; stored state, limits, outcome. |
+| `negotiation.start()`, `.open()`, `.end()`, `.fromNpc(actor)`, `.check()` | Fix 16: start, end, load an NPC (Director); reopen its window; stored state. |
 
 ## Known limitations
 
@@ -315,6 +398,11 @@ position (user flag).
 - Fix 4 has no switch: info and success banners are always muted while an encounter exists.
 - Fix 13's click toggles listen on the main window only, not in detached chat windows.
 - Fix 6's undo records live in memory and are lost on reload.
+- Fixes 15 and 16 keep the running montage and negotiation in world settings, which every client receives: the eyes
+  hide values in the windows, but a player could read them from the browser console.
+- Fix 15 records a test when it is rolled; a later reroll that changes the tier is not read again, so the Director
+  corrects the bars with −/+.
+- Fix 15 needs a Director online to record a player's test.
 
 ## Uninstalling
 

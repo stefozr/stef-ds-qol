@@ -1,0 +1,51 @@
+/* Stef's Quality of Life Improvements for Draw Steel — Fix 17: player colors and token portraits on chat cards. */
+
+/* The border color is set inline on the message; the sender name follows it. */
+.chat-message.dslf-speaker > .message-header .message-sender {
+  color: var(--dslf-speaker-color);
+}
+
+/* Portrait left of the name, spanning the name and the "To:" / flavor lines. */
+.chat-message.dslf-has-token > .message-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 0.5rem;
+  align-items: center;
+}
+
+.chat-message.dslf-has-token > .message-header > * {
+  grid-column: 2 / -1;
+}
+
+.chat-message.dslf-has-token > .message-header > .message-sender {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.chat-message.dslf-has-token > .message-header > .message-metadata {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.chat-message.dslf-has-token > .message-header > .dslf-speaker-token {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  border: 1px solid var(--dslf-speaker-color, rgb(127 127 127 / 0.5));
+  border-radius: 6px;
+  object-fit: cover;
+  object-position: top;
+  background: rgb(0 0 0 / 0.15);
+}
+
+.chat-message.dslf-has-token > .message-header > .dslf-speaker-token.ring {
+  border-radius: 50%;
+}
+
+.chat-message.dslf-has-token > .message-header > .dslf-speaker-token[data-token-id] {
+  cursor: pointer;
+}
