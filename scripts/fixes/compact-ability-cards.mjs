@@ -29,6 +29,22 @@
  *     the system's "⋮" menu (moved, never cloned: the system's ContextMenu is delegated on the part section); the dice
  *     open from the dice total: Draw Steel: Battle Log's dice-image row when its "power roll results" option built one
  *     (it runs before us and had put it in the tier section), else the stock dice boxes.
+ * Draw Steel 1.2 target results: a roll with targets makes one `targetResult` part per target instead of one
+ * `abilityResult` (draw-steel.mjs TargetResultPart, templates/sidebar/chat/parts/target-result.hbs): `section[data-message-part]
+ * > .message-part-header (img, .targetName, a[data-action=resultPartContext]) + .message-part-flavor? + .message-part-rolls
+ * (one `.dice-roll` per roll: the power row, then one damage/heal row per DamageRoll, then Combat Tools' `.dsct-effect-roll`
+ * and forced-movement rows) + .message-part-potency? + footer.message-part-buttons?`. Each target becomes ONE header line
+ * ("[img] Name  dice total  Tier N  [apply damage + ctlib undo]  ⋮"); the power row and the damage rows fold behind the
+ * dice total, and the CSS hides ctlib's undo when the card has stef-ds-automation's section (`.ds-auto-resolution`, which
+ * has the undo). Such a card (`dslf-target-card`, no result line) keeps the ability block's own "Power Roll · tiers" bar:
+ * the tier table opens inside the expanded ability and collapses with it. Conditions the Automation section has a row
+ * for (a `condition` op of that part, effect id and power-roll effect in `flags["stef-ds-automation"].resolution`, any
+ * status, or a button its ui/part-lock.mjs marked `ds-auto-locked`) show there only: Combat Tools' "Applied Effect" row
+ * (`.dsct-effect-roll`) and footer effect buttons are hidden while the card shows that section.
+ * The rows are never removed or reordered (Combat Tools indexes `.message-part-rolls > .dice-roll` by roll index):
+ * only the apply buttons (with their ctlib `.ctlib-split` wrapper, whose handlers are bound per element) are moved into the
+ * header and the rows are hidden by CSS. Effect rows, forced movement, the target text, potency lines and the footer stay.
+ * This pass runs in `Hooks.once("ready")`, after Combat Tools and ctlib (both register at init) added their badges/undo.
  * Draw Steel: Battle Log's other chat options compose: its inlined "Effect:" labels are kept as they are, its
  * name-click collapse still hides everything under the name (our meta line included), its metadata fitting finds the
  * metadata gone and does nothing.
@@ -93,6 +109,13 @@ export function effectLabel(label, hasBody = true) {
 }
 
 export const hasText = (text, hasMedia = false) => cleanText(text).length > 0 || !!hasMedia;
+
+/** Indexes of the rolls `isDamage` accepts: the damage (and heal) rows of a target part, by roll index. */
+export function damageRollIndexes(rolls = [], isDamage = () => false) {
+  const out = [];
+  (rolls ?? []).forEach((roll, i) => { if (isDamage(roll)) out.push(i); });
+  return out;
+}
 
 /* -------------------------------------------------- */
 /*  DOM                                               */
@@ -275,6 +298,7 @@ function resultSections(li, message) {
   if (out.length || message) return out;
   for (const section of li.querySelectorAll("section[data-message-part]")) {
     if (section.querySelector("document-embed")) continue;
+    if (section.querySelector(".message-part-header .targetName")) continue;   // a per-target part, see compactTarget
     if (section.querySelector("dl.power-roll-display") && section.querySelector(".message-part-rolls, .card-rolls")) out.push({ section, part: null });
   }
   return out;
@@ -369,6 +393,169 @@ function compactResult(li, section, part, messageId) {
   return true;
 }
 
+/** targetResult sections of a rendered message with their part. */
+function targetSections(li, message) {
+  const out = [];
+  for (const part of partsOf(message)) {
+    if (part?.type !== "targetResult") continue;
+    const id = part.id ?? part._id;
+    const section = id ? li.querySelector(`section[data-message-part="${id}"]`) : null;
+    if (section) out.push({ section, part });
+  }
+  return out;
+}
+
+/**
+ * The condition a target's effect button applies, whoever drew it: the system's `applyEffect` button
+ * (`data-effect-id`, `data-uuid` = the power-roll effect) or Combat Tools' replacement (`data-dsct-action="dsct-<x>"`,
+ * `dsct-grab` = grabbed; no uuid). `isStatus` keeps Combat Tools' other actions (teleport, forced movement) out.
+ * @param {object|null} data   The button's dataset.
+ * @param {(id: string) => boolean} [isStatus]
+ * @returns {{effectId: string, uuid: string}|null}
+ */
+export function conditionOfButton(data, isStatus = () => true) {
+  if (!data) return null;
+  if (data.action === "applyEffect" && data.effectId) return { effectId: String(data.effectId), uuid: String(data.uuid ?? "") };
+  const m = /^dsct-(.+)$/.exec(String(data.dsctAction ?? ""));
+  if (!m) return null;
+  const id = m[1] === "grab" ? "grabbed" : m[1];
+  return isStatus(id) ? { effectId: id, uuid: "" } : null;
+}
+
+/**
+ * Does stef-ds-automation's record have a row for this condition button (same part and effect id, and the same
+ * power-roll effect when the button names one; any status: pending, applied, resisted/skipped, undone)? Its Automation
+ * row shows the condition and has its own apply button. A button the suite locked (`ds-auto-locked`) counts too.
+ * @param {{effectId?: string, uuid?: string}|null} button  conditionOfButton's result.
+ * @param {object[]} ops       Ops of the message's `flags["stef-ds-automation"].resolution`.
+ * @param {string} partId      The target part's id.
+ * @param {boolean} [locked]   The button carries `ds-auto-locked`.
+ */
+export function suiteHasCondition(button, ops = [], partId = "", locked = false) {
+  if (!button) return false;
+  if (locked) return true;
+  const uuid = String(button.uuid ?? "");
+  return (ops ?? []).some(op => op?.kind === "condition" && !op.lib && op.partId === partId && op.effectId === button.effectId
+    && (!uuid || (!!op.preId && (uuid === op.preId || uuid.endsWith(`.${op.preId}`)))));
+}
+
+const isStatusId = (id) => {
+  const list = globalThis.CONFIG?.statusEffects;
+  return Array.isArray(list) ? list.some(s => s?.id === id) : true;
+};
+
+const suiteOps = (message) => Object.values(message?.flags?.["stef-ds-automation"]?.resolution?.ops ?? {}).filter(Boolean);
+
+const isDamageRoll = (roll) => {
+  try {
+    const DamageRoll = globalThis.ds?.rolls?.DamageRoll;
+    return !!DamageRoll && roll instanceof DamageRoll;
+  } catch (_err) {
+    return false;
+  }
+};
+
+/**
+ * One target part → one header line: dice total, tier, the apply buttons and the "⋮" menu. The power row and the damage
+ * rows stay in place (hidden by CSS until the dice total is clicked); only the buttons are moved.
+ */
+function compactTarget(li, section, part, message, diceRow) {
+  if (section.dataset.dslfCompact === "1") return false;
+  const header = section.querySelector(":scope > .message-part-header");
+  if (!header) return false;   // private roll
+  const doc = section.ownerDocument ?? document;
+  const rows = [...section.querySelectorAll(".message-part-rolls > .dice-roll")];
+  const powerRow = rows.find(r => r.querySelector(".power-result")) ?? null;
+  powerRow?.classList.add("dslf-power-row");
+
+  const lead = make(doc, "span", "dslf-result-lead");
+  const damageRows = damageRollIndexes(part?.rolls, isDamageRoll).map(i => rows[i]).filter(row => row && row !== powerRow);
+  const total = textOf(powerRow?.querySelector(".dice-total"));
+  if (total || damageRows.length || diceRow) {
+    const toggle = make(doc, "a", "dslf-roll-toggle");
+    toggle.setAttribute("role", "button");
+    toggle.dataset.tooltip = localize("DSLF.Chat.Compact.ShowRolls", "Show dice");
+    const icon = make(doc, "i", "fa-solid fa-dice-d10");
+    icon.inert = true;
+    toggle.append(icon);
+    if (total) toggle.append(" ", make(doc, "span", null, total));
+    lead.append(toggle);
+  }
+  const tier = tierLabelFor(part, powerRow ? [powerRow] : []);
+  if (tier) lead.append(make(doc, "span", "dslf-tier-label", tier));
+  const name = header.querySelector(".targetName");
+  if (lead.childNodes.length) {
+    if (name) name.after(lead);
+    else header.append(lead);
+  }
+
+  const apply = make(doc, "span", "dslf-target-apply");
+  for (const row of damageRows) {
+    row.classList.add("dslf-damage-row");
+    const btn = row.querySelector('[data-action="applyDamage"]');
+    if (btn) apply.append(btn.closest(".ctlib-split") ?? btn);
+    else {
+      const text = textOf(row.querySelector("h4.dice-total"));
+      if (text) apply.append(make(doc, "span", "dslf-target-total", text));
+    }
+  }
+  if (apply.childNodes.length) header.append(apply);
+  const menu = header.querySelector('[data-action="resultPartContext"]');
+  if (menu) header.append(menu);   // moved, never cloned: the system's ContextMenu is delegated on the part section
+
+  // Conditions the Automation section has a row for show there only: Combat Tools' "Applied Effect" rows and the footer's
+  // condition buttons (the system's or Combat Tools' own) are marked here and hidden by CSS while the card shows that section.
+  const ops = suiteOps(message);
+  const partId = section.dataset.messagePart ?? "";
+  const owned = (btn) => !!btn && suiteHasCondition(conditionOfButton(btn.dataset, isStatusId), ops, partId, btn.classList.contains("ds-auto-locked"));
+  for (const row of section.querySelectorAll(":scope > .message-part-rolls > .dsct-effect-roll")) {
+    const btns = [...row.querySelectorAll("button")].filter(b => conditionOfButton(b.dataset, isStatusId));
+    if (btns.length && btns.every(owned)) row.classList.add("dslf-suite-row");
+  }
+  for (const child of section.querySelectorAll(":scope > footer.message-part-buttons > *")) {
+    // A footer child is a button, ctlib's split (button + undo) or Battle Log's row of buttons.
+    const btns = child.matches?.("button") ? [child] : [...(child.querySelectorAll?.("button") ?? [])].filter(b => !b.matches(".ctlib-undo"));
+    const marked = btns.filter(b => conditionOfButton(b.dataset, isStatusId) && owned(b));
+    if (!marked.length) continue;
+    if (marked.length === btns.length) child.classList.add("dslf-suite-btn");
+    else for (const b of marked) (b.closest(".ctlib-split") ?? b).classList.add("dslf-suite-btn");
+  }
+
+  if (diceRow && !section.querySelector(".dslf-dice")) {
+    const dice = make(doc, "div", "dslf-dice");
+    dice.append(diceRow);
+    header.after(dice);
+  }
+
+  section.classList.add("dslf-target-part");
+  const key = `${message?.id ?? li.dataset?.messageId ?? ""}:${section.dataset.messagePart ?? ""}`;
+  section.dataset.dslfRollsKey = key;
+  section.classList.toggle("dslf-rolls-open", openRolls.has(key));
+  section.dataset.dslfCompact = "1";
+  li.classList.add("dslf-compact");
+  return true;
+}
+
+/**
+ * Compact the per-target parts of one rendered message (Draw Steel 1.2). Idempotent. Runs from the `ready` hook.
+ * @returns {number} Target parts transformed.
+ */
+export function applyTargets(li, message) {
+  if (!li?.querySelectorAll) return 0;
+  const targets = targetSections(li, message);
+  if (!targets.length) return 0;
+  // Battle Log's dice row (parked by compactTiers) goes to the first target when no abilityResult part could take it.
+  const takesDice = !partsOf(message).some(p => p?.type === "abilityResult");
+  // No result line: the tiers button stays the ability block's own bar (css: dslf-target-card).
+  if (takesDice) li.classList.add("dslf-target-card");
+  let count = 0;
+  for (const { section, part } of targets) {
+    const diceRow = takesDice && count === 0 && section.dataset.dslfCompact !== "1" ? takeDiceRow(li) : null;
+    if (compactTarget(li, section, part, message, diceRow)) count++;
+  }
+  return count;
+}
+
 /**
  * Compact one rendered message. Idempotent: every step checks its marker.
  * @returns {number} Embeds and result parts transformed.
@@ -388,13 +575,15 @@ export function applyAll({ log = false } = {}) {
   if (!enabled()) return 0;
   let count = 0;
   for (const li of document.querySelectorAll("li.chat-message[data-message-id]")) {
-    count += applyMessage(li, game.messages?.get(li.dataset.messageId));
+    const message = game.messages?.get(li.dataset.messageId);
+    count += applyMessage(li, message);
+    count += applyTargets(li, message);
   }
   if (log) console.log(`${MODULE_ID} | Fix 13: compacted ${count} ability card part(s).`);
   return count;
 }
 
-const isAbilityMessage = (message) => partsOf(message).some(p => p?.type === "abilityUse" || p?.type === "abilityResult");
+const isAbilityMessage = (message) => partsOf(message).some(p => p?.type === "abilityUse" || p?.type === "abilityResult" || p?.type === "targetResult");
 
 /** Re-render every rendered ability message (the setting changed: stock or compact again). */
 export function rerenderAll() {
@@ -416,6 +605,7 @@ export function check({ log = true } = {}) {
     if (!message || !isAbilityMessage(message)) continue;
     const results = resultSections(li, message);
     const expectLine = results.some(r => r.section.querySelector("dl.power-roll-display"));
+    const targets = targetSections(li, message);
     rows.push({
       id: li.dataset.messageId,
       where: li.closest("#chat-notifications") ? "notification" : li.closest(".chat-popout") ? "popout" : "log",
@@ -426,6 +616,9 @@ export function check({ log = true } = {}) {
       resultLine: !!li.querySelector("dl.dslf-result"),
       resultExpected: expectLine,
       dice: li.querySelector(".dslf-dice") ? "battle-log" : li.querySelector(".dslf-result-part .dice-roll") ? "core" : null,
+      targetLines: li.querySelectorAll("section.dslf-target-part").length,
+      targetsExpected: targets.filter(t => t.section.querySelector(":scope > .message-part-header")).length,
+      diceRowStranded: [...li.querySelectorAll("document-embed.ability")].some(embed => !!embed.dslfDiceRow),
       menus: results.map(r => r.section.querySelectorAll('.dslf-result-tools [data-action="resultPartContext"]').length),
     });
   }
@@ -495,5 +688,23 @@ export function registerCompactAbilityCards() {
     });
     document.addEventListener("click", onDocumentClick, true);
     console.log(`${MODULE_ID} | Fix 13: ability chat cards are compact (client setting "${SETTING}").`);
+  });
+
+  // Draw Steel 1.2 target parts: after Combat Tools and ctlib (init hooks) added their badges and undo buttons.
+  Hooks.once("ready", () => {
+    Hooks.on("renderChatMessageHTML", (message, html) => {
+      if (!enabled()) return;
+      const li = html instanceof HTMLElement ? html : html?.[0];
+      try {
+        applyTargets(li, message);
+      } catch (err) {
+        console.error(`${MODULE_ID} | Fix 13: compacting target results of message ${message?.id} failed`, err);
+      }
+    });
+    try {
+      applyAll();   // messages rendered before ready
+    } catch (err) {
+      console.error(`${MODULE_ID} | Fix 13: compacting target results failed`, err);
+    }
   });
 }

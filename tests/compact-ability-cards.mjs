@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { isCombatToolsNote, cleanText, metaSegments, rollSummary, tierLabelText, effectLabel, hasText } from "../scripts/fixes/compact-ability-cards.mjs";
+import { isCombatToolsNote, cleanText, metaSegments, rollSummary, tierLabelText, effectLabel, hasText, damageRollIndexes, suiteHasCondition, conditionOfButton } from "../scripts/fixes/compact-ability-cards.mjs";
 
 assert.equal(isCombatToolsNote("Draw Steel: Combat Tools automates part of this. What it does, and what it leaves to you"), true);
 assert.equal(isCombatToolsNote("A GM-only note"), false);
@@ -31,5 +31,26 @@ assert.equal(effectLabel(""), "");
 assert.equal(hasText("  \n "), false);
 assert.equal(hasText("", true), true);
 assert.equal(hasText("x"), true);
+
+class Dmg {}
+assert.deepEqual(damageRollIndexes([{}, new Dmg(), {}, new Dmg()], r => r instanceof Dmg), [1, 3]);
+assert.deepEqual(damageRollIndexes([{}], () => false), []);
+const ops = [{ kind: "damage", partId: "p1" }, { kind: "condition", status: "skipped", partId: "p1", effectId: "bleeding", preId: "pre1" }];
+assert.equal(suiteHasCondition({ effectId: "bleeding", uuid: "Actor.a.Item.i.PowerRollEffect.pre1" }, ops, "p1"), true);
+assert.equal(suiteHasCondition({ effectId: "bleeding", uuid: "Actor.a.Item.i.PowerRollEffect.pre2" }, ops, "p1"), false);
+assert.equal(suiteHasCondition({ effectId: "bleeding", uuid: "Actor.a.Item.i.PowerRollEffect.pre1" }, ops, "p2"), false);
+assert.equal(suiteHasCondition({ effectId: "grabbed", uuid: "x.pre1" }, ops, "p1"), false);
+assert.equal(suiteHasCondition({ effectId: "grabbed", uuid: "x.pre9" }, [], "p1", true), true);
+assert.equal(suiteHasCondition({ effectId: "bleeding", uuid: "x.pre1" }, [{ ...ops[1], lib: true }], "p1"), false);
+assert.equal(suiteHasCondition(null, ops, "p1", true), false);
+assert.equal(suiteHasCondition({ effectId: "bleeding", uuid: "" }, ops, "p1"), true);
+assert.equal(suiteHasCondition({ effectId: "bleeding", uuid: "" }, ops, "p2"), false);
+assert.deepEqual(conditionOfButton({ action: "applyEffect", effectId: "bleeding", uuid: "A.pre1" }), { effectId: "bleeding", uuid: "A.pre1" });
+assert.deepEqual(conditionOfButton({ dsctAction: "dsct-grab", dsctDsid: "claw-swing" }), { effectId: "grabbed", uuid: "" });
+assert.deepEqual(conditionOfButton({ dsctAction: "dsct-frightened" }, id => id === "frightened"), { effectId: "frightened", uuid: "" });
+assert.equal(conditionOfButton({ dsctAction: "dsct-fm" }, id => ["grabbed", "frightened"].includes(id)), null);
+assert.equal(conditionOfButton({ action: "applyDamage" }), null);
+assert.equal(conditionOfButton(null), null);
+assert.deepEqual(damageRollIndexes(undefined, () => true), []);
 
 console.log("compact-ability-cards: all assertions passed");

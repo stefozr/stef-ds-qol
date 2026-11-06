@@ -2,6 +2,22 @@
 
 All notable changes to this module are listed here, newest first.
 
+## [1.2.0] - 2026-11-05
+
+### Changed
+- Verified with Draw Steel 1.2.0 and Combat Tools 2.2.0.
+
+### Fixed
+- Compact ability cards also fold the per-target results of Draw Steel 1.2: each target is one line with its name,
+  dice total, tier and damage button; the dice and the damage formula open from the dice total, and the tier table
+  opens from "tiers" inside the expanded ability. When the card has the automation section, the line's undo button is
+  hidden (that section has the undo) and conditions it has a row for (applied, pending or resisted) show there only,
+  without Combat Tools' "Applied Effect" box or the condition buttons under the target (the system's or Combat
+  Tools' own Grabbed / Frightened / Taunted buttons). "Apply All Damage" is hidden once the automation section owns
+  every damage row.
+- Combat Tools: ending one grab of an ability that grabs several creatures (Claw Swing, Several Arms, ...) no longer
+  drops the other grabs, which used to leave their Grabbed and Grabber effects behind (Fix 18).
+
 ## [1.1.0] - 2026-11-01
 
 ### Added

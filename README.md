@@ -48,7 +48,7 @@ Then enable **Stef's Quality of Life Improvements for Draw Steel** in your world
 | Foundry VTT 14 | Yes | Built and tested on version 14. |
 | Draw Steel system 1.1.2 | Yes | Every fix works on the system's documents, chat cards and interface. |
 | [libWrapper](https://foundryvtt.com/packages/lib-wrapper) | Recommended | Wraps core and system methods cooperatively with other modules. Without it the fixes patch the methods directly. |
-| Draw Steel: Combat Tools | Recommended | Fixes 2, 3, 5 and 8 repair parts of it. Checked against 1.2.3, 1.2.6, 1.2.7 and 1.2.8; on another version the fixes still run and the Director is warned once. Without it those fixes do nothing. |
+| Draw Steel: Combat Tools | Recommended | Fixes 2, 3, 5 and 8 repair parts of it. Checked against 1.2.3, 1.2.6, 1.2.7, 1.2.8 and 2.2.0 (Draw Steel 1.2.0); on another version the fixes still run and the Director is warned once. Without it those fixes do nothing. |
 | Draw Steel: CTLib and Draw Steel: Death Tracker | With Combat Tools | Fix 8 replaces Combat Tools' visibility rule in CTLib's shared registry, which Death Tracker consults for every token. |
 | Draw Steel - Combat Tracker | Recommended | Fix 6 extends its dock (version 1.0.9 only; other versions keep the stock dock and the Director gets a warning). Fix 7 also fixes its portraits (any version). |
 | Draw Steel - Target Damage | Recommended | Fix 10 makes its author check work on Foundry 14 (checked with 1.0.8). |
@@ -350,7 +350,7 @@ in place when a setting, a player's color or assigned character, or an actor's o
 ## Combat Tools version warning
 
 Fixes 2, 3, 5 and 8 depend on how Combat Tools works inside, so they were checked against Combat Tools 1.2.3, 1.2.6,
-1.2.7 and 1.2.8. With another version every fix still installs, but the Director sees one warning per browser and
+1.2.7, 1.2.8 and 2.2.0. Draw Steel 1.2.0 with Combat Tools 2.2.0 is verified. With another version every fix still installs, but the Director sees one warning per browser and
 version, and the console names the fixes to check.
 
 ## Settings
@@ -394,7 +394,7 @@ negotiation (world), the Fix 14 box position and the Fix 15 and 16 window positi
 ## Known limitations
 
 - Fix 6 extends only Draw Steel - Combat Tracker 1.0.9.
-- Fixes 2, 3, 5 and 8 are checked against Combat Tools 1.2.3 to 1.2.8; later versions may need a new check.
+- Fixes 2, 3, 5 and 8 are checked against Combat Tools 1.2.3 to 1.2.8 and 2.2.0 (verified with Draw Steel 1.2.0); later versions may need a new check.
 - Fix 4 has no switch: info and success banners are always muted while an encounter exists.
 - Fix 13's click toggles listen on the main window only, not in detached chat windows.
 - Fix 6's undo records live in memory and are lost on reload.

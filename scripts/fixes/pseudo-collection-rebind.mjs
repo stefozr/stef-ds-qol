@@ -18,7 +18,8 @@
  * is no longer the object at its field path gets the current data copied into its own object, which is
  * then put back at the field path, so the document and the collection share one object again. The
  * document is then re-prepared and its open sheets re-rendered. Self-detecting: nothing happens while
- * the binding is intact (also once the system fixes this upstream).
+ * the binding is intact (also once the system fixes this upstream). Draw Steel 1.2.0 fixed type changes of
+ * pseudo-documents in update-from-compendium (#2115); this fix stays self-detecting and harmless there.
  */
 
 import { MODULE_ID } from "../shared.mjs";

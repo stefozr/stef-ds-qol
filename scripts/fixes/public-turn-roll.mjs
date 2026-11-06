@@ -1,13 +1,13 @@
 /**
  * Fix 1 — turn-start heroic resource roll is always public.
  *
- * `HeroModel#_onStartTurn` (draw-steel 1.1.2, draw-steel.mjs:3424-3437) posts the class
+ * `HeroModel#_onStartTurn` (draw-steel 1.2.0, draw-steel.mjs:13818-13832; 1.1.2: 3424-3437) posts the class
  * `turnGain` roll through `DSRoll#toMessage` without a message mode. `DSRoll#toMessage`
- * (draw-steel.mjs:795-835) then falls back to the *client* setting `core.messageMode`.
+ * (draw-steel.mjs:787-827) then falls back to the *client* setting `core.messageMode`.
  * `_onStartTurn` runs on whichever client decrements the combatant's initiative, so when the
  * Director activates a hero while their chat is set to a private mode, the players never see
  * what their own hero rolled. The system already forces `messageMode: "public"` for the
- * "roll first" message (draw-steel.mjs:11819-11821); this module does the same for the
+ * "roll first" message (draw-steel.mjs:10794); this module does the same for the
  * heroic resource gain.
  *
  * Mechanism: `_onStartTurn` never exposes the roll options, so two wrappers cooperate. The

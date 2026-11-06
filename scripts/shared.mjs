@@ -5,10 +5,10 @@ export const DSCT_ID = "draw-steel-combat-tools";
 export const dsctActive = () => !!game.modules.get(DSCT_ID)?.active;
 
 /**
- * 1.11.0: the Combat Tools versions Fixes 2, 3, 5 and 8 were checked against (their seams are read from its
+ * 1.11.0: the Combat Tools versions Fixes 2, 3, 5, 8 and 18 were checked against (their seams are read from its
  * sources). Outside the list every fix still installs; the Director gets one warning per client and version.
  */
-export const DSCT_VERIFIED = Object.freeze(["1.2.3", "1.2.6", "1.2.7", "1.2.8"]);
+export const DSCT_VERIFIED = Object.freeze(["1.2.3", "1.2.6", "1.2.7", "1.2.8", "2.2.0"]);
 
 /** Is the installed Combat Tools a verified version (true when it is absent or inactive)? */
 export function dsctVersionVerified() {
