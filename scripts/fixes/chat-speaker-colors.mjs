@@ -142,7 +142,8 @@ function applyMessage(message, li) {
       img.className = IMG_CLASS + (image.ring ? " ring" : "");
       img.src = image.src;
       img.alt = "";
-      img.loading = "lazy";
+      // Never `loading = "lazy"`: the chat log's first render waits for every image (ChatLog#scrollBottom waitImages);
+      // a lazy one scrolled out of view never loads, so the chat log and the whole sidebar (tab switching) hang.
       if (token) {
         img.dataset.sceneId = token.parent?.id ?? "";
         img.dataset.tokenId = token.id;

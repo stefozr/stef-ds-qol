@@ -2,6 +2,25 @@
 
 All notable changes to this module are listed here, newest first.
 
+## [1.2.1] - 2026-11-10
+
+### Changed
+- Verified with Draw Steel 1.2.1 and Combat Tools 2.2.1.1.
+
+### Fixed
+- Compact ability cards: Combat Tools 2.2.1 replaced ctlib's "Apply All Damage" with its own "Apply All / Undo All"
+  row (and an apply button on each minion squad). When the automation section handles the card, that row and the
+  squad apply buttons are hidden too, so the card has one place to apply and undo.
+- Compact ability cards: a target whose result is forced movement (Kinetic Grip, Knockback, ...) is one line again.
+  Combat Tools' forced-movement row is hidden when the automation section has a row for it, the tier text opens with
+  the dice, and a long target name is shortened with "…" instead of wrapping the line.
+- Combat Tools' **Bleeding** card shows the damage rolled again, not just the formula (Fix 19). On Draw Steel 1.2 a
+  damage roll's total is its apply button; a module that removes the button (Combat Tools on its Bleeding and fall
+  cards, which apply the damage themselves) left the roll without a number. The total is now shown read-only.
+- Sidebar tabs (Scenes, Tokens, Settings, ...) could stop responding after a reload: a chat card's speaker portrait
+  that was scrolled out of view never loaded, and Foundry's chat log waits for every image before it finishes, which
+  held up the whole sidebar. Portraits now load right away.
+
 ## [1.2.0] - 2026-11-05
 
 ### Changed

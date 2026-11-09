@@ -444,6 +444,41 @@ const isStatusId = (id) => {
   return Array.isArray(list) ? list.some(s => s?.id === id) : true;
 };
 
+/** Does the record have a forced-movement row for this part (any status)? Its Automation row shows "Name → Slide 6 via Combat Tools". */
+export const suiteHasForced = (ops = [], partId = "") => (ops ?? []).some(op => op?.kind === "forced" && op.partId === partId);
+
+/**
+ * Combat Tools' forced-movement rows (`.dsct-fm-roll`) of a part the Automation section has a row for are marked
+ * `dslf-suite-row` (CSS hides them while the card shows that section). The record does not tell which fm row is which
+ * (several rows, several forced ops): one forced op on the part marks them all.
+ * @returns {number} Rows marked.
+ */
+export function markForcedRows(section, ops, partId) {
+  if (!suiteHasForced(ops, partId)) return 0;
+  const rows = [...section.querySelectorAll(":scope > .message-part-rolls > .dsct-fm-roll")];
+  for (const row of rows) row.classList.add("dslf-suite-row");
+  return rows.length;
+}
+
+/**
+ * The system's tier text (`dl.power-roll-display`, direct child of `.message-part-rolls`) goes into the dice fold, shown
+ * only when the dice are opened. Battle Log's `.dslf-dice` is reused; else a tier-only fold (`dslf-tier-fold`) is made
+ * after the header. The dl is moved, never cloned (its "Forced Movement" button keeps its handlers) and is no longer a
+ * child of the rolls frame on a second pass, so nothing is duplicated.
+ * @returns {Element|null} The dl moved, or null.
+ */
+export function foldTierText(section, header, doc) {
+  const dl = section.querySelector(":scope > .message-part-rolls > dl.power-roll-display");
+  if (!dl) return null;
+  let dice = section.querySelector(":scope > .dslf-dice");
+  if (!dice) {
+    dice = make(doc, "div", "dslf-dice dslf-tier-fold");
+    header.after(dice);
+  }
+  dice.append(dl);
+  return dl;
+}
+
 const suiteOps = (message) => Object.values(message?.flags?.["stef-ds-automation"]?.resolution?.ops ?? {}).filter(Boolean);
 
 const isDamageRoll = (roll) => {
@@ -471,7 +506,8 @@ function compactTarget(li, section, part, message, diceRow) {
   const lead = make(doc, "span", "dslf-result-lead");
   const damageRows = damageRollIndexes(part?.rolls, isDamageRoll).map(i => rows[i]).filter(row => row && row !== powerRow);
   const total = textOf(powerRow?.querySelector(".dice-total"));
-  if (total || damageRows.length || diceRow) {
+  const hasTierText = !!section.querySelector(":scope > .message-part-rolls > dl.power-roll-display");
+  if (total || damageRows.length || diceRow || hasTierText) {
     const toggle = make(doc, "a", "dslf-roll-toggle");
     toggle.setAttribute("role", "button");
     toggle.dataset.tooltip = localize("DSLF.Chat.Compact.ShowRolls", "Show dice");
@@ -521,11 +557,14 @@ function compactTarget(li, section, part, message, diceRow) {
     else for (const b of marked) (b.closest(".ctlib-split") ?? b).classList.add("dslf-suite-btn");
   }
 
+  markForcedRows(section, ops, partId);
+
   if (diceRow && !section.querySelector(".dslf-dice")) {
     const dice = make(doc, "div", "dslf-dice");
     dice.append(diceRow);
     header.after(dice);
   }
+  foldTierText(section, header, doc);
 
   section.classList.add("dslf-target-part");
   const key = `${message?.id ?? li.dataset?.messageId ?? ""}:${section.dataset.messagePart ?? ""}`;

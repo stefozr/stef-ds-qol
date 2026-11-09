@@ -2,7 +2,7 @@
   "id": "stef-ds-qol",
   "title": "Stef's Quality of Life Improvements for Draw Steel",
   "description": "Small fixes and table conveniences for the Draw Steel system and the Combat Tools family: public heroic resource rolls, compact or collapsible ability cards in chat, player colors and token portraits on chat cards, a movable Hero Tokens / Malice box, montage test and negotiation trackers, a safer Combat Tracker dock with undo and a setup phase, hidden tokens that stay hidden, ring art in tracker portraits and more, each applied from outside so it survives updates. Stef's Quality of Life Improvements for Draw Steel is not affiliated with MCDM Productions, LLC. Draw Steel is a trademark of MCDM Productions, LLC.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "authors": [
     {
       "name": "Stefan",
@@ -46,7 +46,7 @@
         "type": "system",
         "compatibility": {
           "minimum": "1.1.2",
-          "verified": "1.2.0"
+          "verified": "1.2.1"
         },
         "reason": "Every fix works on the Draw Steel system's documents, chat cards and user interface."
       }
@@ -61,9 +61,9 @@
         "id": "draw-steel-combat-tools",
         "type": "module",
         "compatibility": {
-          "verified": "2.2.0"
+          "verified": "2.2.1.1"
         },
-        "reason": "Fixes 2, 3, 5 and 8 repair its token ghosts, teleport buttons, squad labels and hidden-token reveal (checked against 1.2.3, 1.2.6, 1.2.7 and 1.2.8)."
+        "reason": "Fixes 2, 3, 5 and 8 repair its token ghosts, teleport buttons, squad labels and hidden-token reveal (checked against 1.2.3, 1.2.6, 1.2.7, 1.2.8, 2.2.0 and 2.2.1.1)."
       },
       {
         "id": "draw-steel-combat-tracker",

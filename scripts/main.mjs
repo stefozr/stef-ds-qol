@@ -23,6 +23,7 @@
  *   Fix 16 negotiation-tracker.mjs   system: negotiation tracker (interest, patience, motivations, pitfalls; from an NPC)
  *   Fix 17 chat-speaker-colors.mjs   core + system: chat cards get the speaker's player color and token portrait
  *   Fix 18 dsct-multi-grab-guard.mjs Combat Tools: ending one grab keeps the grabber's other grabs tracked
+ *   Fix 19 roll-total-restore.mjs    system + Combat Tools: a roll whose apply button another module removed still shows its total
  *
  * 1.11.0: the Director is warned once per client and Combat Tools version when that version is not one the Combat
  * Tools fixes were checked against (shared.mjs DSCT_VERIFIED).
@@ -52,6 +53,7 @@ import { registerMontageTracker, montageApi } from "./fixes/montage-tracker.mjs"
 import { registerNegotiationTracker, negotiationApi } from "./fixes/negotiation-tracker.mjs";
 import { registerChatSpeakerColors, chatSpeakersApi } from "./fixes/chat-speaker-colors.mjs";
 import { registerMultiGrabGuard } from "./fixes/dsct-multi-grab-guard.mjs";
+import { registerRollTotalRestore } from "./fixes/roll-total-restore.mjs";
 
 // Registered before the fixes, so its init/ready hooks run first.
 const legacy = registerLegacyMigration({ moduleId: MODULE_ID, legacyIds: ["ds-local-fixes"], version: "1.0.0" });
@@ -75,6 +77,7 @@ registerMontageTracker();
 registerNegotiationTracker();
 registerChatSpeakerColors();
 registerMultiGrabGuard();
+registerRollTotalRestore();
 
 Hooks.once("init", () => {
   game.settings.register(MODULE_ID, "dsctVersionWarned", { scope: "client", config: false, type: String, default: "" });

@@ -29,4 +29,11 @@ assert.deepEqual(speakerImage({ token: blankTok, prototype: proto, defaultToken:
 const wildProto = { ring: { enabled: false }, texture: { src: "tok/goblin-*.webp" } };
 assert.deepEqual(speakerImage({ prototype: wildProto, actorImg: "portraits/goblin.webp", defaultToken: DEF }), { src: "portraits/goblin.webp", ring: false }, "wildcard prototype: actor portrait");
 assert.equal(speakerImage({ prototype: blankTok, actorImg: DEF, defaultToken: DEF }), null, "nothing usable");
+// 1.2.1: the portrait must load eagerly. The chat log's first render waits for every image (ChatLog#scrollBottom
+// waitImages): a lazy one scrolled out of view never loads and the chat log and the sidebar tabs hang.
+{
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../scripts/fixes/chat-speaker-colors.mjs", import.meta.url), "utf8");
+  assert.ok(!/\.loading\s*=\s*["']lazy["']/.test(src), "speaker portrait must not be lazy-loaded");
+}
 console.log("CHAT SPEAKER COLORS TESTS PASSED");

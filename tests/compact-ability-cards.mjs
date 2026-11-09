@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { isCombatToolsNote, cleanText, metaSegments, rollSummary, tierLabelText, effectLabel, hasText, damageRollIndexes, suiteHasCondition, conditionOfButton } from "../scripts/fixes/compact-ability-cards.mjs";
+import { isCombatToolsNote, cleanText, metaSegments, rollSummary, tierLabelText, effectLabel, hasText, damageRollIndexes, suiteHasCondition, conditionOfButton, suiteHasForced, markForcedRows, foldTierText } from "../scripts/fixes/compact-ability-cards.mjs";
 
 assert.equal(isCombatToolsNote("Draw Steel: Combat Tools automates part of this. What it does, and what it leaves to you"), true);
 assert.equal(isCombatToolsNote("A GM-only note"), false);
@@ -52,5 +52,62 @@ assert.equal(conditionOfButton({ dsctAction: "dsct-fm" }, id => ["grabbed", "fri
 assert.equal(conditionOfButton({ action: "applyDamage" }), null);
 assert.equal(conditionOfButton(null), null);
 assert.deepEqual(damageRollIndexes(undefined, () => true), []);
+
+// Minimal fake DOM: a section with a rolls frame (two fm rows, a dl) and a header.
+class El {
+  constructor(tag, cls = "") { this.tag = tag; this.classList = new Set(cls.split(/\s+/).filter(Boolean)); this.children = []; this.parent = null; this.className = cls; }
+  append(...kids) { for (const k of kids) { k.parent?.children.splice(k.parent.children.indexOf(k), 1); k.parent = this; this.children.push(k); } }
+  after(node) { const i = this.parent.children.indexOf(this); node.parent = this.parent; this.parent.children.splice(i + 1, 0, node); }
+  has(c) { return this.classList.has(c) || String(this.className).split(/\s+/).includes(c); }
+  get root() { return this.parent ? this.parent.root : this; }
+  // Only the selectors the fix uses.
+  querySelectorAll(sel) {
+    if (sel === ":scope > .message-part-rolls > .dsct-fm-roll") return this.kids("message-part-rolls").flatMap(r => r.children.filter(c => c.has("dsct-fm-roll")));
+    if (sel === ":scope > .message-part-rolls > dl.power-roll-display") return this.kids("message-part-rolls").flatMap(r => r.children.filter(c => c.tag === "dl" && c.has("power-roll-display")));
+    if (sel === ":scope > .dslf-dice") return this.kids("dslf-dice");
+    throw new Error(`fake: ${sel}`);
+  }
+  querySelector(sel) { return this.querySelectorAll(sel)[0] ?? null; }
+  kids(c) { return this.children.filter(k => k.has(c)); }
+}
+const fakeDoc = { createElement: (tag) => new El(tag) };
+function fakeSection() {
+  const section = new El("section"), header = new El("div", "message-part-header"), rolls = new El("div", "message-part-rolls");
+  const fm1 = new El("div", "dice-roll dsct-fm-roll"), fm2 = new El("div", "dice-roll dsct-fm-roll"), power = new El("div", "dice-roll");
+  const dl = new El("dl", "power-roll-display");
+  rolls.append(power, dl, fm1, fm2);
+  section.append(header, rolls);
+  return { section, header, rolls, fm1, fm2, power, dl };
+}
+assert.equal(suiteHasForced([{ kind: "forced", partId: "p1" }], "p1"), true);
+assert.equal(suiteHasForced([{ kind: "forced", partId: "p2" }, { kind: "damage", partId: "p1" }], "p1"), false);
+assert.equal(suiteHasForced(undefined, "p1"), false);
+{
+  const t = fakeSection();
+  assert.equal(markForcedRows(t.section, [{ kind: "forced", partId: "p1", status: "applied" }], "p1"), 2);
+  assert.ok(t.fm1.has("dslf-suite-row") && t.fm2.has("dslf-suite-row"));
+  assert.ok(!t.power.has("dslf-suite-row"));
+  const u = fakeSection();
+  assert.equal(markForcedRows(u.section, [], "p1"), 0);
+  assert.equal(markForcedRows(u.section, [{ kind: "forced", partId: "other" }], "p1"), 0);
+  assert.ok(!u.fm1.has("dslf-suite-row"));
+}
+{
+  const t = fakeSection();
+  assert.equal(foldTierText(t.section, t.header, fakeDoc), t.dl);
+  const dice = t.section.kids("dslf-dice");
+  assert.equal(dice.length, 1);
+  assert.deepEqual(dice[0].children, [t.dl]);
+  assert.ok(!t.rolls.children.includes(t.dl), "dl left the rolls frame");
+  assert.equal(foldTierText(t.section, t.header, fakeDoc), null, "second pass: nothing to move");
+  assert.equal(t.section.kids("dslf-dice").length, 1);
+  assert.equal(dice[0].children.length, 1, "no duplicate");
+  // Battle Log's fold is reused.
+  const b = fakeSection();
+  const bl = new El("div", "dslf-dice"); b.section.append(bl);
+  foldTierText(b.section, b.header, fakeDoc);
+  assert.equal(b.section.kids("dslf-dice").length, 1);
+  assert.deepEqual(bl.children, [b.dl]);
+}
 
 console.log("compact-ability-cards: all assertions passed");

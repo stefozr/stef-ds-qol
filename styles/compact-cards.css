@@ -211,7 +211,7 @@
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part > .message-part-header {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: center;
   gap: 0.2em 0.4em;
@@ -229,7 +229,7 @@
 }
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part > .message-part-header > .targetName {
   order: 1;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -237,13 +237,15 @@
 }
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part .dslf-result-lead {
   order: 2;
-  flex: 0 0 auto;
+  flex: none;
 }
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part .dslf-target-apply {
   order: 3;
+  flex: none;
 }
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part > .message-part-header > [data-action="resultPartContext"] {
   order: 4;
+  flex: none;
 }
 /* The Automation section on the same card has the undo: ctlib's undo beside the moved apply button is hidden (kept in
    the DOM for Death Tracker, and shown on cards the suite did not resolve). */
@@ -263,9 +265,18 @@
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) footer.message-part-buttons:has(> .dsbl-btn-row > [data-ctlib-apply-all].ds-auto-locked):not(:has(> :not(.dsbl-btn-row))):not(:has(> .dsbl-btn-row > :not([data-ctlib-apply-all]))) {
   display: none;
 }
+/* Combat Tools 2.2's own "Apply All / Undo All" row (Draw Steel 1.2 cards) once stef-ds-automation locked it: the suite
+   marks the footer row, its split and the buttons `ds-auto-locked` (every damage row is the Automation section's). On a
+   minion squad only the apply split in the squad header goes; the squad <details> and its target rows stay. */
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) footer.dsct-apply-all-row.ds-auto-locked,
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) footer.dsct-apply-all-row:has(.ds-auto-locked),
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) summary.dsct-dstd-squad-hdr .dsct-squad12-btn.ds-auto-locked,
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) summary.dsct-dstd-squad-hdr .ctlib-split:has(> .ds-auto-locked) {
+  display: none;
+}
 /* The boxed rolls frame goes when every row in it is folded (target text and Combat Tools' rows keep it). */
-:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part:is(:not(.dslf-rolls-open), :has(> .dslf-dice)) > .message-part-rolls:not(:has(> :not(.dslf-power-row, .dslf-damage-row))),
-:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) section.dslf-target-part:is(:not(.dslf-rolls-open), :has(> .dslf-dice)) > .message-part-rolls:not(:has(> :not(.dslf-power-row, .dslf-damage-row, .dslf-suite-row))) {
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part:is(:not(.dslf-rolls-open), :has(> .dslf-dice:not(.dslf-tier-fold))) > .message-part-rolls:not(:has(> :not(.dslf-power-row, .dslf-damage-row))),
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact:has(.ds-auto-resolution) section.dslf-target-part:is(:not(.dslf-rolls-open), :has(> .dslf-dice:not(.dslf-tier-fold))) > .message-part-rolls:not(:has(> :not(.dslf-power-row, .dslf-damage-row, .dslf-suite-row))) {
   display: none;
 }
 /* The apply span may wrap to a second line in the narrow sidebar, never clip. */
@@ -306,7 +317,7 @@
 /* Dice stay in the DOM (Combat Tools indexes the rows), shown from the dice total. */
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part:not(.dslf-rolls-open) :is(.dslf-power-row, .dslf-damage-row),
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part:not(.dslf-rolls-open) > .dslf-dice,
-:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part:has(> .dslf-dice) :is(.dslf-power-row, .dslf-damage-row) {
+:is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part:has(> .dslf-dice:not(.dslf-tier-fold)) :is(.dslf-power-row, .dslf-damage-row) {
   display: none;
 }
 :is(.chat-sidebar, #chat-notifications, .chat-popout) li.chat-message.dslf-compact section.dslf-target-part > .dslf-dice {
